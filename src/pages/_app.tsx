@@ -1,18 +1,20 @@
-import type { AppContext, AppProps } from "next/app";
-import { getUser } from "../contexts/AuthContext";
+import theme from "../theme";
+import type { AppProps } from "next/app";
+import GlobalStyles from "../theme/GlobalStyles";
+import SharedLayout from "../layouts/SharedLayout";
+import { AuthProvider } from "../contexts/AuthContext";
+import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 
-const Polygon = ({ Component, pageProps }: AppProps) => {
-  return <Component {...pageProps} />;
-};
-
-Polygon.getInitialProps = async (context: AppContext) => {
-  const { user } = await getUser();
-
-  return {
-    props: {
-      user,
-    },
-  };
-};
+const Polygon = ({ Component, pageProps }: AppProps) => (
+  <ChakraProvider theme={theme}>
+    <GlobalStyles />
+    <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+    <SharedLayout>
+      <AuthProvider>
+        <Component {...pageProps} />
+      </AuthProvider>
+    </SharedLayout>
+  </ChakraProvider>
+);
 
 export default Polygon;
