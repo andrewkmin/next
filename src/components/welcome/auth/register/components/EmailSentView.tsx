@@ -11,7 +11,7 @@ const EmailSentView = ({ payload }: EmailSentViewProps) => {
   const toast = useToast({ isClosable: false });
   const [cooldown, setCooldown] = useState(0);
   const handleSendAgain = async () => {
-    const response = await axios.post("/auth/register", payload);
+    const response = await axios.post("/api/auth/register", payload);
 
     // Checking response status
     toast({

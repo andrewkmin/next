@@ -14,7 +14,11 @@ import truncate from "../../helpers/truncate";
 import { formatDistanceToNow } from "date-fns";
 import { User as UserType } from "../../types/user";
 import { Post as PostType } from "../../types/post";
-import { RiHeart2Fill, RiShareForwardFill, RiChat2Fill } from "react-icons/ri";
+import {
+  RiHeart2Fill,
+  // RiShareForwardFill,
+  RiChat2Fill,
+} from "react-icons/ri";
 
 interface PostProps {
   data: Partial<PostType & { user: Partial<UserType> }>;
@@ -29,15 +33,21 @@ const Post = ({ data }: PostProps) => {
         <Box>
           <Flex alignItems={"center"} justifyContent={"space-between"}>
             <Stack alignItems={"center"} direction={"row"} spacing={2.5}>
-              <Avatar
-                rounded={"full"}
-                boxSize={"45px"}
-                src={data.user?.avatar}
-                name={data.user?.username!!}
-              />
+              <NextLink href={`/users/${data.user?.username!!}`} passHref>
+                <Link rounded={"full"}>
+                  <Avatar
+                    rounded={"full"}
+                    boxSize={"45px"}
+                    src={data.user?.avatar}
+                    name={data.user?.username!!}
+                  />
+                </Link>
+              </NextLink>
 
               <NextLink passHref href={`/users/${data.user?.username!!}`}>
                 <Link
+                  p={1}
+                  rounded={"lg"}
                   style={{
                     textDecoration: "none",
                   }}
@@ -54,7 +64,7 @@ const Post = ({ data }: PostProps) => {
             <Stack userSelect={"none"} alignItems={"center"}>
               {/* <Tooltip label={data.created_at?.toString()}> */}
               <Text fontSize={"sm"}>
-                {formatDistanceToNow(data.created_at!!, {
+                {formatDistanceToNow(new Date(data.created_at!!), {
                   addSuffix: true,
                   includeSeconds: true,
                 })}
@@ -89,13 +99,13 @@ const Post = ({ data }: PostProps) => {
               />
             </Tooltip>
 
-            <Tooltip label={"Share"}>
+            {/* <Tooltip label={"Share"}>
               <IconButton
                 isRound
                 icon={<RiShareForwardFill />}
                 aria-label={"Share"}
               />
-            </Tooltip>
+            </Tooltip> */}
           </Stack>
         </Box>
       </Stack>

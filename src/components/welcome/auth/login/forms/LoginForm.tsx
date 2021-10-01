@@ -37,7 +37,7 @@ const LoginForm = () => {
     // Enable loader
     setIsSubmitting(true);
     // Sending the request
-    const authResponse = await axios.post("/auth/login", payload);
+    const authResponse = await axios.post("/api/auth/login", payload);
     // Disable loader
     setIsSubmitting(false);
 

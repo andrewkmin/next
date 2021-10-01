@@ -1,42 +1,59 @@
-// import crypto from "crypto";
-// import Post from "../components/Post";
-// import { Post as PostType } from "../types/post";
-// import { User as UserType } from "../types/user";
+import Head from "next/head";
+import axios from "../helpers/axios";
+import Post from "../components/Post";
+import type { User as UserType } from "../types/user";
+import type { Post as PostType } from "../types/post";
+import PlatformLayout from "../layouts/PlatformLayout";
 import { Box, Container, Stack } from "@chakra-ui/react";
+import { ReactElement, useEffect, useState } from "react";
 
-// const posts: Partial<PostType & { user: Partial<UserType> }>[] = [
-//   {
-//     user: {
-//       username: "mike",
-//       first_name: "Michael",
-//       last_name: "Grigoryan",
-//       cover: "https://picsum.photos/1920/1080",
-//       avatar:
-//         "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80",
-//       id: crypto.randomBytes(12).toString("hex"),
-//     },
-//     is_private: false,
-//     body: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit fugit illo voluptates tempore commodi harum eaque. Odio debitis voluptate inventore ab laboriosam libero, dolorum soluta ullam ipsum perspiciatis corrupti porro",
-//     created_at: new Date(),
-//     id: crypto.randomBytes(12).toString("hex"),
-//     user_id: crypto.randomBytes(4).toString("hex"),
-//   },
-// ];
+type IndexProps = {
+  posts: Partial<PostType & { user: Partial<UserType> }>[];
+};
 
 const Index = () => {
+  const [next, setNext] = useState("");
+  const [posts, setPosts] = useState<IndexProps["posts"]>([]);
+
+  const fetchPosts = async (cursor?: string) => {
+    const { data, status } = await axios.get(
+      `/api/discover/posts${cursor !== "" ? `?cursor=${cursor}` : ""}`
+    );
+    setNext(data.next);
+    status === 200 && setPosts(posts.concat(data.data));
+  };
+
+  useEffect(() => {
+    fetchPosts(next);
+
+    return () => {
+      setPosts([]);
+    };
+  }, []);
+
   return (
-    <Box>
-      <Box p={8}>
-        <Container>
-          <Stack spacing={5}>
-            {/* {posts.map((post) => {
-              return <Post key={post.id} data={post} />;
-            })} */}
-          </Stack>
-        </Container>
+    <>
+      <Head>
+        <title></title>
+      </Head>
+
+      <Box>
+        <Box p={8}>
+          <Container>
+            <Stack spacing={5}>
+              {posts?.map((post) => {
+                return <Post key={post.id} data={post} />;
+              })}
+            </Stack>
+          </Container>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
+
+(Index as any).getLayout = (page: ReactElement) => (
+  <PlatformLayout>{page}</PlatformLayout>
+);
 
 export default Index;

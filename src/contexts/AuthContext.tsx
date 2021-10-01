@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
 
   useEffect(() => {
     const auth = async () => {
-      const { data, status } = await axios.get("/auth");
+      const { data, status } = await axios.get("/api/auth");
       if (status === 200) setUser(data);
       else console.warn("Couldn't authenticate the user from the context");
     };

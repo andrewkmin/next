@@ -12,6 +12,7 @@
     "inlineSourceMap": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
+    "downlevelIteration": true,
     "typeRoots": ["src/types/**/*.d.ts"],
     "lib": ["dom", "dom.iterable", "esnext"],
     "forceConsistentCasingInFileNames": true
