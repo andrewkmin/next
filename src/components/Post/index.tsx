@@ -12,13 +12,10 @@ import {
 import NextLink from "next/link";
 import truncate from "../../helpers/truncate";
 import { formatDistanceToNow } from "date-fns";
+import { FiExternalLink } from "react-icons/fi";
 import { User as UserType } from "../../types/user";
 import { Post as PostType } from "../../types/post";
-import {
-  RiHeart2Fill,
-  // RiShareForwardFill,
-  RiChat2Fill,
-} from "react-icons/ri";
+import { RiHeart2Fill, RiChat2Fill } from "react-icons/ri";
 
 interface PostProps {
   data: Partial<PostType & { user: Partial<UserType> }>;
@@ -62,14 +59,12 @@ const Post = ({ data }: PostProps) => {
             </Stack>
 
             <Stack userSelect={"none"} alignItems={"center"}>
-              {/* <Tooltip label={data.created_at?.toString()}> */}
               <Text fontSize={"sm"}>
                 {formatDistanceToNow(new Date(data.created_at!!), {
                   addSuffix: true,
                   includeSeconds: true,
                 })}
               </Text>
-              {/* </Tooltip> */}
             </Stack>
           </Flex>
         </Box>
@@ -86,26 +81,38 @@ const Post = ({ data }: PostProps) => {
         </Box>
 
         <Box>
-          <Stack direction={"row"}>
-            <Button rounded={"full"} leftIcon={<RiHeart2Fill />}>
-              Heart
-            </Button>
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            justifyContent={"space-between"}
+          >
+            <Stack direction={"row"}>
+              <Button rounded={"full"} leftIcon={<RiHeart2Fill />}>
+                Heart
+              </Button>
 
-            <Tooltip label={"Comments"}>
-              <IconButton
-                isRound
-                icon={<RiChat2Fill />}
-                aria-label={"Comments"}
-              />
-            </Tooltip>
+              <Tooltip label={"Comments"}>
+                <IconButton
+                  isRound
+                  icon={<RiChat2Fill />}
+                  aria-label={"Comments"}
+                />
+              </Tooltip>
+            </Stack>
 
-            {/* <Tooltip label={"Share"}>
-              <IconButton
-                isRound
-                icon={<RiShareForwardFill />}
-                aria-label={"Share"}
-              />
-            </Tooltip> */}
+            <Box>
+              <NextLink href={`/posts/${data.id!!}`} passHref>
+                <Link>
+                  <Tooltip label={"Open post"}>
+                    <IconButton
+                      isRound
+                      aria-label={"Open post"}
+                      icon={<FiExternalLink />}
+                    />
+                  </Tooltip>
+                </Link>
+              </NextLink>
+            </Box>
           </Stack>
         </Box>
       </Stack>

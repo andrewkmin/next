@@ -1,13 +1,11 @@
 import theme from "../theme";
 import { NextPage } from "next";
-import Router from "next/router";
-import NProgress from "nprogress";
 import type { AppProps } from "next/app";
+import { ReactElement, ReactNode } from "react";
 import GlobalStyles from "../theme/GlobalStyles";
 import SharedLayout from "../layouts/SharedLayout";
 import { AuthProvider } from "../contexts/AuthContext";
-import { ReactElement, ReactNode, useState } from "react";
-import { ChakraProvider, ColorModeScript, Progress } from "@chakra-ui/react";
+import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
