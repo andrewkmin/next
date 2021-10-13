@@ -21,11 +21,11 @@ interface PostProps {
   data: Partial<PostType & { user: Partial<UserType> }>;
 }
 
-const Post = ({ data }: PostProps) => {
+const Post = ({ data, ...rest }: PostProps) => {
   const [isTruncated, body] = truncate(data?.body!!);
 
   return (
-    <Box p={4} rounded={"2xl"} boxShadow={"lg"} bgColor={"gray.900"}>
+    <Box p={4} {...rest} rounded={"2xl"} boxShadow={"lg"} bgColor={"gray.900"}>
       <Stack spacing={3}>
         <Box>
           <Flex alignItems={"center"} justifyContent={"space-between"}>
@@ -59,7 +59,7 @@ const Post = ({ data }: PostProps) => {
             </Stack>
 
             <Stack userSelect={"none"} alignItems={"center"}>
-              <Text fontSize={"sm"}>
+              <Text fontWeight={"bold"} fontSize={"xs"}>
                 {formatDistanceToNow(new Date(data.created_at!!), {
                   addSuffix: true,
                   includeSeconds: true,

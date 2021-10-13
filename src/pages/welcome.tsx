@@ -9,6 +9,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import Head from "next/head";
 import Auth from "../components/welcome/auth";
 import { GetServerSideProps, NextPage } from "next";
 
@@ -38,44 +39,50 @@ export const getServerSideProps: GetServerSideProps<WelcomeProps> = async (
 // The welcome/authentication page
 const Welcome: NextPage<WelcomeProps> = ({ photoURL }) => {
   return (
-    <Box minH={"100vh"}>
-      <Alert colorScheme={"purple"} pos={"absolute"}>
-        <Text>
-          We're still launching. If you are experiencing any issues with our
-          platform please contact our support team at{" "}
-          <chakra.a textDecor={"underline"} href={"mailto:hi@polygon.am"}>
-            hi@polygon.am
-          </chakra.a>
-        </Text>
-      </Alert>
+    <>
+      <Head>
+        <title>Welcome to Polygon</title>
+      </Head>
 
-      {/* {isFirstTime !== false && typeof window !== "undefined" && <Greeting />} */}
+      <Box minH={"100vh"}>
+        <Alert colorScheme={"purple"} pos={"absolute"}>
+          <Text>
+            We{`'`}re still launching. If you are experiencing any issues with our
+            platform please contact our support team at{" "}
+            <chakra.a textDecor={"underline"} href={"mailto:hi@polygon.am"}>
+              hi@polygon.am
+            </chakra.a>
+          </Text>
+        </Alert>
 
-      <Flex
-        w={"100vw"}
-        minH={"100vh"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-        direction={["column-reverse", null, null, "row"]}
-      >
+        {/* {isFirstTime !== false && typeof window !== "undefined" && <Greeting />} */}
+
         <Flex
-          w={"full"}
-          flexWrap={"wrap"}
+          w={"100vw"}
+          minH={"100vh"}
           alignItems={"center"}
-          justifyContent={"center"}
+          justifyContent={"space-between"}
+          direction={["column-reverse", null, null, "row"]}
         >
-          <Image
-            w={"100%"}
-            zIndex={-1}
-            src={photoURL}
-            border={"none"}
-            objectFit={"cover"}
-            bgColor={"purple.400"}
-            filter={"brightness(60%)"}
-            borderColor={"transparent"}
-            h={["50vh", null, null, "100vh"]}
-          />
-          {/* <Box
+          <Flex
+            w={"full"}
+            flexWrap={"wrap"}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
+            <Image
+              w={"100%"}
+              zIndex={-1}
+              src={photoURL}
+              border={"none"}
+              alt={"Cover image"}
+              objectFit={"cover"}
+              bgColor={"purple.400"}
+              filter={"brightness(60%)"}
+              borderColor={"transparent"}
+              h={["50vh", null, null, "100vh"]}
+            />
+            {/* <Box
             w={"100%"}
             zIndex={-1}
             // src={photo}
@@ -98,47 +105,48 @@ const Welcome: NextPage<WelcomeProps> = ({ photoURL }) => {
             ></video>
           </Box> */}
 
-          {/* <Image
+            {/* <Image
             w={"15%"}
             zIndex={1}
             pos={"absolute"}
             filter={"brightness(0) invert(1)"}
           /> */}
-        </Flex>
+          </Flex>
 
-        <Flex
-          p={10}
-          w={"full"}
-          maxH={"100%"}
-          minH={"50vh"}
-          alignItems={"center"}
-          justifyContent={"center"}
-        >
-          <Box h={"100%"}>
-            <Center>
-              <Stack mt={16} spacing={5} px={[9, null, null, 0]}>
-                <Stack>
-                  <Center>
-                    <Heading fontWeight={"bold"} fontSize={"5xl"}>
-                      Polygon
-                    </Heading>
-                  </Center>
+          <Flex
+            p={10}
+            w={"full"}
+            maxH={"100%"}
+            minH={"50vh"}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
+            <Box h={"100%"}>
+              <Center>
+                <Stack mt={16} spacing={5} px={[9, null, null, 0]}>
+                  <Stack>
+                    <Center>
+                      <Heading fontWeight={"bold"} fontSize={"5xl"}>
+                        Polygon
+                      </Heading>
+                    </Center>
 
-                  <Center>
-                    <Text fontSize={["xl", "2xl"]} fontWeight={"semibold"}>
-                      Private gate to global network
-                    </Text>
-                  </Center>
+                    <Center>
+                      <Text fontSize={["xl", "2xl"]} fontWeight={"semibold"}>
+                        Private gate to global network
+                      </Text>
+                    </Center>
+                  </Stack>
+
+                  <Auth />
+                  {/* {!verification ? <Auth /> : <Verification sid={verification} />} */}
                 </Stack>
-
-                <Auth />
-                {/* {!verification ? <Auth /> : <Verification sid={verification} />} */}
-              </Stack>
-            </Center>
-          </Box>
+              </Center>
+            </Box>
+          </Flex>
         </Flex>
-      </Flex>
-    </Box>
+      </Box>
+    </>
   );
 };
 

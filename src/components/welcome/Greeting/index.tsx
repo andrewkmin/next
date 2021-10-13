@@ -55,7 +55,7 @@ const Greeting = () => {
               </Text>
 
               <Text>
-                We're honored to have a user like{" "}
+                We{`'`}re honored to have a user like{" "}
                 <chakra.span fontWeight={"thin"} color={"purple.500"}>
                   you
                 </chakra.span>{" "}

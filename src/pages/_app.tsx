@@ -5,6 +5,8 @@ import { ReactElement, ReactNode } from "react";
 import GlobalStyles from "../theme/GlobalStyles";
 import SharedLayout from "../layouts/SharedLayout";
 import { AuthProvider } from "../contexts/AuthContext";
+import { ReactQueryDevtools } from "react-query/devtools";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 
 type NextPageWithLayout = NextPage & {
@@ -14,6 +16,15 @@ type NextPageWithLayout = NextPage & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const Polygon = ({ Component, pageProps }: AppPropsWithLayout) => {
   // For having consistent layouts across pages
@@ -25,7 +36,15 @@ const Polygon = ({ Component, pageProps }: AppPropsWithLayout) => {
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
 
       <SharedLayout>
-        <AuthProvider>{getLayout(<Component {...pageProps} />)}</AuthProvider>
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            {getLayout(<Component {...pageProps} />)}
+            <ReactQueryDevtools
+              initialIsOpen={false}
+              position={"bottom-left"}
+            />
+          </QueryClientProvider>
+        </AuthProvider>
       </SharedLayout>
     </ChakraProvider>
   );
