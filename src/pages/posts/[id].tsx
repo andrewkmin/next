@@ -4,28 +4,24 @@ import {
   Text,
   Avatar,
   Button,
-  // IconButton,
   Stack,
   Flex,
-  // Tooltip,
   Heading,
   Divider,
   Center,
+  Input,
 } from "@chakra-ui/react";
 import Head from "next/head";
+import { ReactElement } from "react";
 import axios from "../../helpers/axios";
+import { RiHeart2Fill } from "react-icons/ri";
 import truncate from "../../helpers/truncate";
 import { formatDistanceToNow } from "date-fns";
 import { GetServerSideProps, NextPage } from "next";
 import type { Post as PostType } from "../../types/post";
 import type { User as UserType } from "../../types/user";
-import type { Comment as CommentType } from "../../types/comment";
-import {
-  RiHeart2Fill,
-  // RiShareForwardFill
-} from "react-icons/ri";
-import { ReactElement } from "react";
 import PlatformLayout from "../../layouts/PlatformLayout";
+import type { Comment as CommentType } from "../../types/comment";
 
 type PostPage = {
   post: Partial<PostType & { user: Partial<UserType> }>;
@@ -50,7 +46,7 @@ export const getServerSideProps: GetServerSideProps<PostPage> = async ({
     return {
       props: {
         post: post.data,
-        comments: comments.data.data,
+        comments: comments.data,
       },
     };
   }
@@ -121,14 +117,6 @@ const Post: NextPage<PostPage> = ({ post, comments }) => {
                       <Button leftIcon={<RiHeart2Fill />} rounded={"full"}>
                         Heart
                       </Button>
-
-                      {/* <Tooltip label={"Share"}>
-                        <IconButton
-                          isRound
-                          aria-label={"Share"}
-                          icon={<RiShareForwardFill />}
-                        />
-                      </Tooltip> */}
                     </Stack>
                   </Box>
                 </Stack>
@@ -140,9 +128,17 @@ const Post: NextPage<PostPage> = ({ post, comments }) => {
             <Container>
               <Box>
                 <Stack spacing={8}>
-                  <Stack>
+                  <Stack spacing={4}>
                     <Heading>Comments</Heading>
                     <Divider />
+                    <Stack direction={"row"}>
+                      <Box w={"full"}>
+                        <Input
+                          placeholder={"What do you think about this post? 🤔"}
+                        />
+                      </Box>
+                      <Button>Comment</Button>
+                    </Stack>
                   </Stack>
 
                   {comments.length === 0 && (

@@ -3,22 +3,20 @@ import {
   Container,
   Stack,
   Heading,
-  Center,
   Spinner,
   Button,
-  Text,
+  Center,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { NextPage } from "next";
 import axios from "../helpers/axios";
 import Post from "../components/Post";
 import { useVirtual } from "react-virtual";
+import { ReactElement, useRef } from "react";
 import { useInfiniteQuery } from "react-query";
 import type { Post as PostType } from "../types/post";
 import type { User as UserType } from "../types/user";
 import PlatformLayout from "../layouts/PlatformLayout";
-import { ReactElement, useCallback, useRef } from "react";
-import { useBottomScrollListener } from "react-bottom-scroll-listener";
 
 type Response = {
   next: string | null;
@@ -51,14 +49,14 @@ const Index: NextPage = () => {
     }
   );
 
+  const flatPosts: Partial<PostType & { user: Partial<UserType> }>[] = [];
+  if (data?.pages) data?.pages?.map((page) => flatPosts.concat(page.data));
+
   const parentRef = useRef();
   const rowVirtualizer = useVirtual({
     parentRef,
-    size: data?.pages.length!! + 1,
-    estimateSize: useCallback(() => 100, [data?.pages]),
+    size: hasNextPage ? data?.pages.length!! + 1 : data?.pages.length!!,
   });
-
-  useBottomScrollListener(() => fetchNextPage());
 
   return (
     <>
@@ -80,32 +78,33 @@ const Index: NextPage = () => {
                   </Box>
                 )}
 
-                <Stack spacing={4} ref={parentRef as any}>
-                  {rowVirtualizer.virtualItems.map((virtualRow) => {
-                    return data?.pages[virtualRow.index]?.data.map((post) => {
-                      return <Post key={post.id} data={post!!} />;
-                    });
-                  })}
-                </Stack>
+                <Box>
+                  <Stack spacing={4} ref={parentRef as any}>
+                    {rowVirtualizer.virtualItems.map((virtualRow) => {
+                      return data?.pages[virtualRow.index]?.data.map((post) => {
+                        return <Post key={post.id} data={post!!} />;
+                      });
+                    })}
+                  </Stack>
+                </Box>
 
-                {isFetching || isFetchingNextPage ? (
-                  <Box>
-                    <Spinner />
-                    <Text>Loading</Text>
-                  </Box>
-                ) : null}
-
-                <Button
-                  colorScheme={"purple"}
-                  onClick={() => fetchNextPage()}
-                  isDisabled={
-                    (!hasNextPage && isPreviousData) ||
-                    isFetchingNextPage ||
-                    isFetching
-                  }
-                >
-                  Load more
-                </Button>
+                <Box>
+                  <Center>
+                    <Button
+                      bgColor={"purple.400"}
+                      colorScheme={"purple"}
+                      onClick={() => fetchNextPage()}
+                      isLoading={isFetching || isFetchingNextPage}
+                      isDisabled={
+                        (!hasNextPage && isPreviousData) ||
+                        isFetchingNextPage ||
+                        isFetching
+                      }
+                    >
+                      Load more
+                    </Button>
+                  </Center>
+                </Box>
               </Stack>
             </Stack>
           </Container>

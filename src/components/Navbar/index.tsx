@@ -1,8 +1,16 @@
+import {
+  Box,
+  Link,
+  Progress,
+  Flex,
+  Spacer,
+  Stack,
+  Badge,
+} from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useState } from "react";
 import Router from "next/router";
 import NProgress from "nprogress";
-import { Box, Link, Progress, Flex, Spacer } from "@chakra-ui/react";
 
 const Navbar = () => {
   // For providing smooth navigation experience throughout platform pages by showing a progress bar
@@ -22,23 +30,31 @@ const Navbar = () => {
 
   return (
     <Box as={"nav"} zIndex={9999} top={0} pos={"sticky"}>
-      <Box bgColor={"gray.900"} p={4}>
+      <Box bgColor={"gray.900"} p={2}>
         <Flex>
           <Box>
-            <NextLink href={"/"} passHref>
-              <Link
-                p={2}
-                rounded={"lg"}
-                fontSize={"3xl"}
-                fontWeight={"bold"}
-                color={"purple.400"}
-                style={{
-                  textDecoration: "none",
-                }}
-              >
-                Polygon
-              </Link>
-            </NextLink>
+            <Stack spacing={0.5} alignItems={"center"} direction={"row"}>
+              <NextLink href={"/"} passHref>
+                <Link
+                  p={2}
+                  rounded={"lg"}
+                  fontSize={"3xl"}
+                  fontWeight={"bold"}
+                  color={"purple.400"}
+                  style={{
+                    textDecoration: "none",
+                  }}
+                >
+                  Polygon
+                </Link>
+              </NextLink>
+
+              <Box>
+                <Badge mb={-1} colorScheme={"purple"}>
+                  Public Alpha
+                </Badge>
+              </Box>
+            </Stack>
           </Box>
 
           <Spacer />
@@ -50,7 +66,6 @@ const Navbar = () => {
       {/* Progress bar */}
       <Progress
         max={1.0}
-        hasStripe
         isAnimated
         size={"xs"}
         value={status}
