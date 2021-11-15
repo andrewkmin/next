@@ -7,12 +7,16 @@ import {
   FormLabel,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { useState, useContext } from "react";
+import {
+  useState,
+  // useContext
+} from "react";
 import LoginButton from "../buttons/LoginButton";
 import axios from "../../../../../helpers/axios";
-import { AuthContext } from "../../../../../contexts/AuthContext";
+// import { UserContext } from "../../../../../contexts/UserContext";
+// import { AuthContext } from "../../../../../contexts/AuthContext";
 
 type Inputs = {
   email: string;
@@ -27,43 +31,41 @@ const LoginForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
-  const router = useRouter();
-  const { setUser } = useContext(AuthContext);
+  // const router = useRouter();
+  // const { setUser } = useContext(UserContext);
+  // const { setToken } = useContext(AuthContext);
   const toast = useToast({ position: "bottom-left" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // For handling the login
   const handleLogin = async (payload: Inputs) => {
-    // Enable loader
     setIsSubmitting(true);
-    // Sending the request
-    const authResponse = await axios.post("/api/auth/login", payload);
-    // Disable loader
+
+    const tokenResponse = await axios.post("/auth/login", payload);
+
     setIsSubmitting(false);
 
-    // Checking response status
-    if (authResponse.status !== 204) {
-      const { status, data } = authResponse;
+    if (tokenResponse.status !== 200) {
+      const { status, data } = tokenResponse;
 
       // If there are invalid fields
       if (status === 400) {
         const errorResponse = data as {
           errors: [{ param: string; msg: string }];
         };
-        errorResponse?.errors?.forEach((error) =>
+
+        return errorResponse?.errors?.forEach((error) =>
           setError(error.param as any, { message: error.msg })
         );
       }
       // If the credentials are invalid
       else if (status === 403) {
-        setError("password", { message: "Incorrect password" });
+        return setError("password", { message: "Incorrect password" });
       }
       // If user doesn't exist
       else if (status === 404) {
-        setError("email", { message: "That account doesn't exist" });
-      }
-      // If it's another error
-      else {
+        return setError("email", { message: "That account doesn't exist" });
+      } else {
         return toast({
           status: "error",
           isClosable: false,
@@ -71,11 +73,12 @@ const LoginForm = () => {
         });
       }
     } else {
-      // Fetching user data
-      const { data: user } = await axios.get("/api/accounts/me");
-      // Setting the state
-      setUser!!({ ...user });
-      return router.push("/");
+      // TODO: Add the rest of handling logic
+      // setToken(tokenResponse.data.token!!);
+      // // Fetching user data
+      // const { data: user } = await axios.get("/api/accounts/me");
+      // setUser(user);
+      // return router.push("/");
     }
   };
 

@@ -8,8 +8,9 @@ import {
   Spacer,
   Flex,
 } from "@chakra-ui/react";
-import Head from "next/head";
+// import Head from "next/head";
 import { NextPage } from "next";
+import { NextSeo } from "next-seo";
 import type { ReactElement } from "react";
 import { useForm } from "react-hook-form";
 import PlatformLayout from "../layouts/PlatformLayout";
@@ -20,27 +21,32 @@ type CreateForm = {
 
 const Create: NextPage = () => {
   const {
-    watch,
+    // watch,
     register,
-    handleSubmit,
+    // handleSubmit,
     formState: { dirtyFields },
   } = useForm<CreateForm>();
 
-  const watchBody = watch("body");
-  const createPost = async (payload: CreateForm) => {};
+  // const watchBody = watch("body");
+  // const createPost = async (payload: CreateForm) => {};
 
   return (
     <>
-      <Head>
-        <title>Create post — Polygon</title>
-      </Head>
+      <NextSeo
+        title={"Create a post"}
+        openGraph={{
+          title: "Create a post",
+        }}
+      />
 
       <Box>
         <Container mt={4} maxW={"container.md"}>
           <Stack spacing={8}>
             <Heading>Create a post</Heading>
 
-            <form onSubmit={handleSubmit(createPost)}>
+            <form
+            // onSubmit={handleSubmit(createPost)}
+            >
               <Stack spacing={4}>
                 <Box>
                   <Textarea
@@ -51,7 +57,9 @@ const Create: NextPage = () => {
                     {...register("body", {
                       required: true,
                     })}
-                    placeholder={"Post anything you want :)"}
+                    placeholder={
+                      "Hello world, created to work and not to feeeeeel..."
+                    }
                   />
                 </Box>
 

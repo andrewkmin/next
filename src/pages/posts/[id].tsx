@@ -11,21 +11,20 @@ import {
   Center,
   Input,
 } from "@chakra-ui/react";
-import Head from "next/head";
+// import Head from "next/head";
+import { NextSeo } from "next-seo";
 import { ReactElement } from "react";
 import axios from "../../helpers/axios";
 import { RiHeart2Fill } from "react-icons/ri";
 import truncate from "../../helpers/truncate";
 import { formatDistanceToNow } from "date-fns";
 import { GetServerSideProps, NextPage } from "next";
-import type { Post as PostType } from "../../types/post";
-import type { User as UserType } from "../../types/user";
 import PlatformLayout from "../../layouts/PlatformLayout";
-import type { Comment as CommentType } from "../../types/comment";
 
+// TODO: Fix with proper typing
 type PostPage = {
-  post: Partial<PostType & { user: Partial<UserType> }>;
-  comments: Partial<CommentType & { user: Partial<UserType> }>[];
+  post: any;
+  comments: any;
 };
 
 // Fetching all post information on server-side
@@ -66,20 +65,19 @@ const Post: NextPage<PostPage> = ({ post, comments }) => {
 
   return (
     <>
-      <Head>
-        <title>{metaTitle}</title>
-        <meta name={"title"} content={metaTitle} />
-        <meta name={"description"} content={metaDescription} />
-
-        <meta
-          property={"article:published_time"}
-          content={String(post.created_at!!)}
-        />
-        <meta property={"og:type"} content={"article"} />
-        <meta property={"og:title"} content={metaTitle} />
-        <meta property={"og:description"} content={metaDescription} />
-        <meta property={"article:author"} content={post.user?.username} />
-      </Head>
+      <NextSeo
+        title={metaTitle}
+        description={metaDescription}
+        openGraph={{
+          type: "article",
+          title: metaTitle,
+          description: metaDescription,
+          article: {
+            authors: [post.user.username],
+            publishedTime: String(post.created_at),
+          },
+        }}
+      />
 
       <Box>
         <Stack spacing={6}>

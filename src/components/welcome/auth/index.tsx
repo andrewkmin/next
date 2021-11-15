@@ -10,8 +10,6 @@ const Auth = () => {
         <Login />
         <Registration />
       </Stack>
-
-      {/* <Forgot /> */}
     </Stack>
   );
 };

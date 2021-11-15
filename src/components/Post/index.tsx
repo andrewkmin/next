@@ -13,15 +13,15 @@ import NextLink from "next/link";
 import truncate from "../../helpers/truncate";
 import { formatDistanceToNow } from "date-fns";
 import { FiExternalLink } from "react-icons/fi";
-import { User as UserType } from "../../types/user";
-import { Post as PostType } from "../../types/post";
 import { RiHeart2Fill, RiChat2Fill } from "react-icons/ri";
 
+// TODO: Fix with proper typing
 interface PostProps {
-  data: Partial<PostType & { user: Partial<UserType> }>;
+  data: any;
 }
 
 const Post = ({ data, ...rest }: PostProps) => {
+  // Shortening post text
   const [isTruncated, body] = truncate(data?.body!!);
 
   return (

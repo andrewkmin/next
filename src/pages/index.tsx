@@ -7,24 +7,29 @@ import {
   Button,
   Center,
 } from "@chakra-ui/react";
-import Head from "next/head";
+// import Head from "next/head";
 import { NextPage } from "next";
+import { NextSeo } from "next-seo";
 import axios from "../helpers/axios";
 import Post from "../components/Post";
 import { useVirtual } from "react-virtual";
-import { ReactElement, useRef } from "react";
 import { useInfiniteQuery } from "react-query";
-import type { Post as PostType } from "../types/post";
-import type { User as UserType } from "../types/user";
+// import { UserContext } from "../contexts/UserContext";
 import PlatformLayout from "../layouts/PlatformLayout";
+import {
+  ReactElement,
+  // useContext,
+  useRef,
+} from "react";
 
 type Response = {
   next: string | null;
   prev: string | null;
-  data: Partial<PostType & { user: Partial<UserType> }>[];
+  data: any;
 };
 
 const Index: NextPage = () => {
+  // const { user } = useContext(UserContext);
   const {
     data,
     isLoading,
@@ -49,7 +54,8 @@ const Index: NextPage = () => {
     }
   );
 
-  const flatPosts: Partial<PostType & { user: Partial<UserType> }>[] = [];
+  // TODO: Fix typings
+  const flatPosts: any = [];
   if (data?.pages) data?.pages?.map((page) => flatPosts.concat(page.data));
 
   const parentRef = useRef();
@@ -60,9 +66,7 @@ const Index: NextPage = () => {
 
   return (
     <>
-      <Head>
-        <title>Polygon</title>
-      </Head>
+      <NextSeo title={"Polygon"} />
 
       <Box>
         <Box p={8}>
@@ -81,9 +85,11 @@ const Index: NextPage = () => {
                 <Box>
                   <Stack spacing={4} ref={parentRef as any}>
                     {rowVirtualizer.virtualItems.map((virtualRow) => {
-                      return data?.pages[virtualRow.index]?.data.map((post) => {
-                        return <Post key={post.id} data={post!!} />;
-                      });
+                      return data?.pages[virtualRow.index]?.data.map(
+                        (post: any) => {
+                          return <Post key={post.id} data={post!!} />;
+                        }
+                      );
                     })}
                   </Stack>
                 </Box>

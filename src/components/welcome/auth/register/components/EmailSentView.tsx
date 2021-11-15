@@ -8,10 +8,11 @@ interface EmailSentViewProps {
 }
 
 const EmailSentView = ({ payload }: EmailSentViewProps) => {
-  const toast = useToast({ isClosable: false });
   const [cooldown, setCooldown] = useState(0);
+  const toast = useToast({ isClosable: false });
+
   const handleSendAgain = async () => {
-    const response = await axios.post("/api/auth/register", payload);
+    const response = await axios.post("/auth/register", payload);
 
     // Checking response status
     toast({
@@ -28,12 +29,15 @@ const EmailSentView = ({ payload }: EmailSentViewProps) => {
           : null,
     });
 
-    response.status === 204 && setCooldown(60);
+    if (response.status === 204) {
+      return setCooldown(60);
+    }
   };
 
   useEffect(() => {
     const interval = setInterval(() => setCooldown(cooldown - 1), 1000);
     if (cooldown === 0) clearInterval(interval);
+
     return () => clearInterval(interval);
   }, [cooldown]);
 

@@ -139,7 +139,6 @@ const Welcome: NextPage<WelcomeProps> = ({ photoURL }) => {
                   </Stack>
 
                   <Auth />
-                  {/* {!verification ? <Auth /> : <Verification sid={verification} />} */}
                 </Stack>
               </Center>
             </Box>

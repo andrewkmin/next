@@ -8,6 +8,7 @@ import { AuthProvider } from "../contexts/AuthContext";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
+import { UserProvider } from "../contexts/UserContext";
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -37,13 +38,16 @@ const Polygon = ({ Component, pageProps }: AppPropsWithLayout) => {
 
       <SharedLayout>
         <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            {getLayout(<Component {...pageProps} />)}
-            <ReactQueryDevtools
-              initialIsOpen={false}
-              position={"bottom-left"}
-            />
-          </QueryClientProvider>
+          <UserProvider>
+            <QueryClientProvider client={queryClient}>
+              {getLayout(<Component {...pageProps} />)}
+
+              <ReactQueryDevtools
+                initialIsOpen={false}
+                position={"bottom-left"}
+              />
+            </QueryClientProvider>
+          </UserProvider>
         </AuthProvider>
       </SharedLayout>
     </ChakraProvider>

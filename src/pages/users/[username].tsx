@@ -6,19 +6,19 @@ import {
   useClipboard,
   useToast,
 } from "@chakra-ui/react";
+import { NextSeo } from "next-seo";
 import { ReactElement } from "react";
 import axios from "../../helpers/axios";
 import Post from "../../components/Post";
 import { GetServerSideProps, NextPage } from "next";
-import { Post as PostType } from "../../types/post";
-import { User as UserType } from "../../types/user";
 import PlatformLayout from "../../layouts/PlatformLayout";
 
+// TODO: Fix with proper typing
 type ProfileProps = {
-  user: Partial<UserType>;
-  posts: Partial<PostType>[];
-  followers: Partial<UserType>[];
-  following: Partial<UserType>[];
+  user: any;
+  posts: any[];
+  followers: any[];
+  following: any[];
 };
 
 // const DEFAULT_BACKGROUND_URL =
@@ -91,39 +91,54 @@ const Profile: NextPage<ProfileProps> = ({
   };
 
   return (
-    <Box p={8}>
-      <Box>
-        <Stack spacing={8}>
-          <Box>
-            <Stack spacing={4} direction={"row"} alignItems={"center"}>
-              <Avatar size={"xl"} src={user.cover} name={user.username!!} />
+    <>
+      <NextSeo
+        title={user.username}
+        defaultTitle={user.username}
+        openGraph={{
+          title: user.username,
+          profile: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            username: user.username,
+          },
+        }}
+      />
 
-              <Stack spacing={-1}>
-                <Text fontSize={"2xl"}>
-                  {user.first_name} {user.last_name}
-                </Text>
+      <Box p={8}>
+        <Box>
+          <Stack spacing={8}>
+            <Box>
+              <Stack spacing={4} direction={"row"} alignItems={"center"}>
+                <Avatar size={"xl"} src={user.cover} name={user.username!!} />
 
-                <Stack direction={"row"} alignItems={"center"}>
-                  <Text
-                    cursor={"pointer"}
-                    color={"gray.300"}
-                    onClick={copyUsername}
-                  >
-                    @{user.username}
+                <Stack spacing={-1}>
+                  <Text fontSize={"2xl"}>
+                    {user.first_name} {user.last_name}
                   </Text>
+
+                  <Stack direction={"row"} alignItems={"center"}>
+                    <Text
+                      cursor={"pointer"}
+                      color={"gray.300"}
+                      onClick={copyUsername}
+                    >
+                      @{user.username}
+                    </Text>
+                  </Stack>
                 </Stack>
               </Stack>
-            </Stack>
-          </Box>
+            </Box>
 
-          <Box>
-            {(posts as any).data.map((post: any) => {
-              return <Post key={post.id} data={post} />;
-            })}
-          </Box>
-        </Stack>
+            <Box>
+              {(posts as any).data.map((post: any) => {
+                return <Post key={post.id} data={post} />;
+              })}
+            </Box>
+          </Stack>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

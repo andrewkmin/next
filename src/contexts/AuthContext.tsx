@@ -7,29 +7,39 @@ import {
   useEffect,
 } from "react";
 import axios from "../helpers/axios";
-import type { User } from "../types/user";
 
 export const AuthContext = createContext<{
-  user?: Partial<User> | null;
-  setUser?: Dispatch<SetStateAction<Partial<User> | null>>;
-}>({});
+  token: string | null;
+  setToken: Dispatch<SetStateAction<string | null>>;
+}>({
+  token: null,
+  setToken: () => {},
+});
 
 export const AuthProvider = ({ children }: { children: any }) => {
-  const [user, setUser] = useState<Partial<User> | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const auth = async () => {
-      const { data, status } = await axios.get("/api/auth");
-      if (status === 200) setUser(data);
-      else console.warn("Couldn't authenticate the user from the context");
-    };
+    const token = localStorage.getItem("token");
 
-    if (!user) auth();
-    return () => {};
+    if (token !== null) {
+      axios.defaults.headers.common = {
+        Authorization: token!!,
+      };
+    }
+
+    const listener = (window.onbeforeunload = () => {
+      localStorage.setItem("token", token!!);
+      setToken(null);
+    });
+
+    return () => {
+      window.removeEventListener("beforeunload", listener);
+    };
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ token, setToken }}>
       {children}
     </AuthContext.Provider>
   );
@@ -37,6 +47,6 @@ export const AuthProvider = ({ children }: { children: any }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("AuthContext.Provider was not initialized");
+  if (!context) throw new Error("`AuthContext.Provider` was not initialized");
   return context;
 };
