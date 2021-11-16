@@ -7,20 +7,19 @@ import {
   Button,
   Center,
 } from "@chakra-ui/react";
-// import Head from "next/head";
 import { NextPage } from "next";
 import { NextSeo } from "next-seo";
 import axios from "../helpers/axios";
 import Post from "../components/Post";
 import { useVirtual } from "react-virtual";
 import { useInfiniteQuery } from "react-query";
-// import { UserContext } from "../contexts/UserContext";
 import PlatformLayout from "../layouts/PlatformLayout";
 import {
   ReactElement,
   // useContext,
   useRef,
 } from "react";
+import withAuth from "../helpers/withAuth";
 
 type Response = {
   next: string | null;
@@ -29,7 +28,6 @@ type Response = {
 };
 
 const Index: NextPage = () => {
-  // const { user } = useContext(UserContext);
   const {
     data,
     isLoading,
@@ -124,4 +122,4 @@ const Index: NextPage = () => {
   <PlatformLayout>{page}</PlatformLayout>
 );
 
-export default Index;
+export default withAuth(<Index />, "/welcome");

@@ -20,23 +20,26 @@ export const AuthProvider = ({ children }: { children: any }) => {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token !== null) {
+    const __token = localStorage.getItem("token");
+    if (__token !== null)
       axios.defaults.headers.common = {
-        Authorization: token!!,
+        Authorization: __token,
       };
-    }
+    if (__token === null) localStorage.removeItem("token");
 
-    const listener = (window.onbeforeunload = () => {
-      localStorage.setItem("token", token!!);
-      setToken(null);
+    // Adding an event listener
+    const listener = window.addEventListener("beforeunload", () => {
+      if (token !== null) {
+        localStorage.setItem("token", token!!);
+        return setToken(null);
+      }
     });
 
     return () => {
-      window.removeEventListener("beforeunload", listener);
+      // Cleaning up the listeners
+      window.removeEventListener("beforeunload", listener as any);
     };
-  }, []);
+  }, [token]);
 
   return (
     <AuthContext.Provider value={{ token, setToken }}>

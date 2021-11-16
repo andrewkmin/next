@@ -7,16 +7,16 @@ import {
   FormLabel,
   FormErrorMessage,
 } from "@chakra-ui/react";
-// import { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import {
   useState,
-  // useContext
+  useContext
 } from "react";
 import LoginButton from "../buttons/LoginButton";
 import axios from "../../../../../helpers/axios";
-// import { UserContext } from "../../../../../contexts/UserContext";
-// import { AuthContext } from "../../../../../contexts/AuthContext";
+import { UserContext } from "../../../../../contexts/UserContext";
+import { AuthContext } from "../../../../../contexts/AuthContext";
 
 type Inputs = {
   email: string;
@@ -31,9 +31,9 @@ const LoginForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
-  // const router = useRouter();
-  // const { setUser } = useContext(UserContext);
-  // const { setToken } = useContext(AuthContext);
+  const router = useRouter();
+  const { setUser } = useContext(UserContext);
+  const { setToken } = useContext(AuthContext);
   const toast = useToast({ position: "bottom-left" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -73,12 +73,11 @@ const LoginForm = () => {
         });
       }
     } else {
-      // TODO: Add the rest of handling logic
-      // setToken(tokenResponse.data.token!!);
+      setToken(tokenResponse.data.token!!);
       // // Fetching user data
-      // const { data: user } = await axios.get("/api/accounts/me");
-      // setUser(user);
-      // return router.push("/");
+      const { data: user } = await axios.get("/api/accounts/me");
+      setUser(user);
+      await router.push("/");
     }
   };
 
