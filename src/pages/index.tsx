@@ -12,7 +12,7 @@ import { NextSeo } from "next-seo";
 import axios from "../helpers/axios";
 import Post from "../components/Post";
 import { useVirtual } from "react-virtual";
-import { ReactElement, useRef } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import { useInfiniteQuery } from "react-query";
 import PlatformLayout from "../layouts/PlatformLayout";
 
@@ -57,6 +57,21 @@ const Index: NextPage = () => {
     size: hasNextPage ? data?.pages.length!! + 1 : data?.pages.length!!,
   });
 
+  useEffect(() => {
+    const listener = window.addEventListener("scroll", (_) => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 2000 >
+        document.documentElement.offsetHeight
+      ) {
+        fetchNextPage();
+      }
+    });
+
+    return () => {
+      window.removeEventListener("scroll", listener as any);
+    };
+  }, []);
+
   return (
     <>
       <NextSeo title={"Polygon"} />
@@ -76,33 +91,18 @@ const Index: NextPage = () => {
                 )}
 
                 <Box>
-                  <Stack spacing={4} ref={parentRef as any}>
-                    {rowVirtualizer.virtualItems.map((virtualRow) => {
-                      return data?.pages[virtualRow.index]?.data.map(
-                        (post: any) => {
-                          return <Post key={post.id} data={post!!} />;
-                        }
-                      );
+                  <Stack spacing={4}>
+                    {data?.pages.map((page) => {
+                      return page.data.map((post: any) => {
+                        return (
+                          <>
+                            {JSON.stringify({ post }, null, 2)}
+                            <br />
+                          </>
+                        );
+                      });
                     })}
                   </Stack>
-                </Box>
-
-                <Box>
-                  <Center>
-                    <Button
-                      bgColor={"purple.400"}
-                      colorScheme={"purple"}
-                      onClick={() => fetchNextPage()}
-                      isLoading={isFetching || isFetchingNextPage}
-                      isDisabled={
-                        (!hasNextPage && isPreviousData) ||
-                        isFetchingNextPage ||
-                        isFetching
-                      }
-                    >
-                      Load more
-                    </Button>
-                  </Center>
                 </Box>
               </Stack>
             </Stack>

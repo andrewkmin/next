@@ -5,11 +5,14 @@ import { ReactElement, ReactNode } from "react";
 import GlobalStyles from "../theme/GlobalStyles";
 import SharedLayout from "../layouts/SharedLayout";
 import { AuthProvider } from "../contexts/AuthContext";
+import { UserProvider } from "../contexts/UserContext";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
-import { UserProvider } from "../contexts/UserContext";
 
+/**
+ * For supporting page layouts
+ */
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -18,6 +21,9 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
+/**
+ * `react-query` client
+ */
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

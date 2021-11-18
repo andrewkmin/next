@@ -9,7 +9,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import Head from "next/head";
+import { NextSeo } from "next-seo";
 import Auth from "../components/welcome/auth";
 import { GetServerSideProps, NextPage } from "next";
 
@@ -17,45 +17,52 @@ type WelcomeProps = {
   photoURL: string;
 };
 
-export const getServerSideProps: GetServerSideProps<WelcomeProps> = async (
-  ctx
-) => {
-  /**
-   * Image options:
-   * 1. https://images.unsplash.com/photo-1621347924118-ac0aa8d40b59?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OTh8fHB1cnBsZXxlbnwwfDF8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=100
-   * 2. https://images.unsplash.com/photo-1603118675111-239b194fb8d8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=375&q=100 (preferred)
-   * 3. https://cdn.pixabay.com/photo/2017/07/08/11/45/purple-2484167_960_720.jpg
-   * 4. https://images.unsplash.com/photo-1535478044878-3ed83d5456ef?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=769&q=1080
-   */
+export const getServerSideProps: GetServerSideProps<WelcomeProps> =
+  async () => {
+    /**
+     * Image options:
+     * 1. https://images.unsplash.com/photo-1621347924118-ac0aa8d40b59?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OTh8fHB1cnBsZXxlbnwwfDF8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=100
+     * 2. https://images.unsplash.com/photo-1603118675111-239b194fb8d8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=375&q=100 (preferred)
+     * 3. https://cdn.pixabay.com/photo/2017/07/08/11/45/purple-2484167_960_720.jpg
+     * 4. https://images.unsplash.com/photo-1535478044878-3ed83d5456ef?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=769&q=1080
+     */
 
-  return {
-    props: {
-      photoURL:
-        "https://images.unsplash.com/photo-1603118675111-239b194fb8d8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=100",
-    },
+    return {
+      props: {
+        photoURL:
+          "https://images.unsplash.com/photo-1603118675111-239b194fb8d8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=100",
+      },
+    };
   };
-};
 
 // The welcome/authentication page
 const Welcome: NextPage<WelcomeProps> = ({ photoURL }) => {
+  const metaTitle = "Welcome to Polygon";
+  const metaDescription =
+    "Polygon is an open-source and privacy-oriented social network that is not hungry for your data";
+
   return (
     <>
-      <Head>
-        <title>Welcome to Polygon</title>
-      </Head>
+      <NextSeo
+        title={metaTitle}
+        description={metaDescription}
+        openGraph={{
+          type: "website",
+          title: metaTitle,
+          description: metaDescription,
+        }}
+      />
 
       <Box minH={"100vh"}>
         <Alert colorScheme={"purple"} pos={"absolute"}>
           <Text>
-            We{`'`}re still launching. If you are experiencing any issues with our
-            platform please contact our support team at{" "}
+            We{`'`}re still launching. If you are experiencing any issues with
+            our platform please contact our support team at{" "}
             <chakra.a textDecor={"underline"} href={"mailto:hi@polygon.am"}>
               hi@polygon.am
             </chakra.a>
           </Text>
         </Alert>
-
-        {/* {isFirstTime !== false && typeof window !== "undefined" && <Greeting />} */}
 
         <Flex
           w={"100vw"}

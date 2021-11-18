@@ -22,7 +22,7 @@ interface PostProps {
 
 const Post = ({ data, ...rest }: PostProps) => {
   // Shortening post text
-  const [isTruncated, body] = truncate(data?.body!!);
+  const [isTruncated, body] = truncate(data?.content!!);
 
   return (
     <Box p={4} {...rest} rounded={"2xl"} boxShadow={"lg"} bgColor={"gray.900"}>
