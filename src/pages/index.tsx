@@ -12,14 +12,9 @@ import { NextSeo } from "next-seo";
 import axios from "../helpers/axios";
 import Post from "../components/Post";
 import { useVirtual } from "react-virtual";
+import { ReactElement, useRef } from "react";
 import { useInfiniteQuery } from "react-query";
 import PlatformLayout from "../layouts/PlatformLayout";
-import {
-  ReactElement,
-  // useContext,
-  useRef,
-} from "react";
-import withAuth from "../helpers/withAuth";
 
 type Response = {
   next: string | null;
@@ -122,4 +117,4 @@ const Index: NextPage = () => {
   <PlatformLayout>{page}</PlatformLayout>
 );
 
-export default withAuth(<Index />, "/welcome");
+export default Index;
