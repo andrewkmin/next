@@ -4,17 +4,19 @@ import {
   Stack,
   Heading,
   Spinner,
-  Button,
   Center,
+  useToast,
+  Button,
 } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { NextSeo } from "next-seo";
 import axios from "../helpers/axios";
 import Post from "../components/Post";
 import { useVirtual } from "react-virtual";
-import { ReactElement, useEffect, useRef, useState } from "react";
+import { ReactElement, useRef } from "react";
 import { useInfiniteQuery } from "react-query";
 import PlatformLayout from "../layouts/PlatformLayout";
+// import { useInView } from "react-intersection-observer";
 
 type Response = {
   next: string | null;
@@ -23,6 +25,7 @@ type Response = {
 };
 
 const Index: NextPage = () => {
+  const toast = useToast();
   const {
     data,
     isLoading,
@@ -34,14 +37,28 @@ const Index: NextPage = () => {
   } = useInfiniteQuery(
     "posts",
     async ({ pageParam = null }) => {
-      const path = `/api/discover/posts${
-        pageParam ? `/?cursor=${pageParam}` : ""
+      const path = `/api/discover/posts/${
+        pageParam ? `?cursor=${pageParam}` : ""
       }`;
+
       const { data } = await axios.get<Response>(path);
+
       return data;
     },
     {
+      retry: false,
+      enabled: true,
       keepPreviousData: true,
+      onError: (error) => {
+        console.error(error);
+
+        return toast({
+          duration: 2000,
+          status: "error",
+          description: String(error),
+          title: "There was an error",
+        });
+      },
       getNextPageParam: (lastPage) => lastPage.next ?? false,
       getPreviousPageParam: (firstPage) => firstPage.prev ?? false,
     }
@@ -51,26 +68,18 @@ const Index: NextPage = () => {
   const flatPosts: any = [];
   if (data?.pages) data?.pages?.map((page) => flatPosts.concat(page.data));
 
-  const parentRef = useRef();
-  const rowVirtualizer = useVirtual({
-    parentRef,
-    size: hasNextPage ? data?.pages.length!! + 1 : data?.pages.length!!,
+  // Initialize `react-virtual`
+  const virtualParentRef = useRef<any>(null);
+  const virtual = useVirtual({
+    parentRef: virtualParentRef,
+    size:
+      hasNextPage && !isPreviousData
+        ? data?.pages.length!! + 1
+        : data?.pages.length!!,
   });
 
-  useEffect(() => {
-    const listener = window.addEventListener("scroll", (_) => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop + 2000 >
-        document.documentElement.offsetHeight
-      ) {
-        fetchNextPage();
-      }
-    });
-
-    return () => {
-      window.removeEventListener("scroll", listener as any);
-    };
-  }, []);
+  // Intersection watcher
+  // const [buttonViewportRef, buttonInView] = useInView();
 
   return (
     <>
@@ -81,8 +90,17 @@ const Index: NextPage = () => {
           <Container>
             <Stack spacing={5}>
               <Heading>Timeline</Heading>
-              <Stack spacing={5}>
-                {isLoading && (
+
+              <Stack spacing={4}>
+                <Stack ref={virtualParentRef}>
+                  {virtual.virtualItems.map((item) => {
+                    return data?.pages[item?.index]?.data?.map((item: any) => {
+                      return <Post key={item.id} data={item} />;
+                    });
+                  })}
+                </Stack>
+
+                {(isLoading || isFetching || isFetchingNextPage) && (
                   <Box>
                     <Center>
                       <Spinner />
@@ -90,20 +108,12 @@ const Index: NextPage = () => {
                   </Box>
                 )}
 
-                <Box>
-                  <Stack spacing={4}>
-                    {data?.pages.map((page) => {
-                      return page.data.map((post: any) => {
-                        return (
-                          <>
-                            {JSON.stringify({ post }, null, 2)}
-                            <br />
-                          </>
-                        );
-                      });
-                    })}
-                  </Stack>
-                </Box>
+                <Button
+                  // ref={buttonViewportRef}
+                  onClick={() => fetchNextPage()}
+                >
+                  Load more
+                </Button>
               </Stack>
             </Stack>
           </Container>
