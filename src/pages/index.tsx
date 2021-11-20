@@ -8,6 +8,11 @@ import {
   useToast,
   Button,
 } from "@chakra-ui/react";
+import {
+  GLOBAL_META_DESCRIPTION,
+  GLOBAL_META_TITLE,
+  OPEN_GRAPH_GLOBAL_TYPE,
+} from "../constants";
 import { NextPage } from "next";
 import { NextSeo } from "next-seo";
 import axios from "../helpers/axios";
@@ -37,12 +42,9 @@ const Index: NextPage = () => {
   } = useInfiniteQuery(
     "posts",
     async ({ pageParam = null }) => {
-      const path = `/api/discover/posts/${
-        pageParam ? `?cursor=${pageParam}` : ""
-      }`;
-
+      // prettier-ignore
+      const path = `/api/discover/posts/${pageParam ? `?cursor=${pageParam}` : ""}`;
       const { data } = await axios.get<Response>(path);
-
       return data;
     },
     {
@@ -83,7 +85,15 @@ const Index: NextPage = () => {
 
   return (
     <>
-      <NextSeo title={"Polygon"} />
+      <NextSeo
+        title={GLOBAL_META_TITLE}
+        description={GLOBAL_META_DESCRIPTION}
+        openGraph={{
+          title: GLOBAL_META_TITLE,
+          type: OPEN_GRAPH_GLOBAL_TYPE,
+          description: GLOBAL_META_DESCRIPTION,
+        }}
+      />
 
       <Box>
         <Box p={8}>

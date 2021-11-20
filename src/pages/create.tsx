@@ -8,34 +8,35 @@ import {
   Spacer,
   Flex,
 } from "@chakra-ui/react";
-// import Head from "next/head";
+import {
+  CREATE_POST_META_DESCRIPTION,
+  CREATE_POST_META_TITLE,
+  OPEN_GRAPH_GLOBAL_TYPE,
+} from "../constants";
 import { NextPage } from "next";
 import { NextSeo } from "next-seo";
 import type { ReactElement } from "react";
 import { useForm } from "react-hook-form";
 import PlatformLayout from "../layouts/PlatformLayout";
 
+// Form body
 type CreateForm = {
   body: string;
 };
 
 const Create: NextPage = () => {
-  const {
-    // watch,
-    register,
-    // handleSubmit,
-    formState: { dirtyFields },
-  } = useForm<CreateForm>();
-
-  // const watchBody = watch("body");
-  // const createPost = async (payload: CreateForm) => {};
+  // prettier-ignore
+  const { register, formState: { dirtyFields } } = useForm<CreateForm>();
 
   return (
     <>
       <NextSeo
-        title={"Create a post"}
+        title={CREATE_POST_META_TITLE}
+        description={CREATE_POST_META_DESCRIPTION}
         openGraph={{
-          title: "Create a post",
+          type: OPEN_GRAPH_GLOBAL_TYPE,
+          title: CREATE_POST_META_TITLE,
+          description: CREATE_POST_META_DESCRIPTION,
         }}
       />
 
@@ -44,9 +45,7 @@ const Create: NextPage = () => {
           <Stack spacing={8}>
             <Heading>Create a post</Heading>
 
-            <form
-            // onSubmit={handleSubmit(createPost)}
-            >
+            <form onSubmit={() => {}}>
               <Stack spacing={4}>
                 <Box>
                   <Textarea

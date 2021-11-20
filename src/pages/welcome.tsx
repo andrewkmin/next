@@ -9,6 +9,11 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import {
+  GLOBAL_META_TITLE,
+  OPEN_GRAPH_GLOBAL_TYPE,
+  WELCOME_META_DESCRIPTION,
+} from "../constants";
 import { NextSeo } from "next-seo";
 import Auth from "../components/welcome/auth";
 import { GetServerSideProps, NextPage } from "next";
@@ -37,19 +42,15 @@ export const getServerSideProps: GetServerSideProps<WelcomeProps> =
 
 // The welcome/authentication page
 const Welcome: NextPage<WelcomeProps> = ({ photoURL }) => {
-  const metaTitle = "Welcome to Polygon";
-  const metaDescription =
-    "Polygon is an open-source and privacy-oriented social network that is not hungry for your data";
-
   return (
     <>
       <NextSeo
-        title={metaTitle}
-        description={metaDescription}
+        title={GLOBAL_META_TITLE}
+        description={WELCOME_META_DESCRIPTION}
         openGraph={{
-          type: "website",
-          title: metaTitle,
-          description: metaDescription,
+          title: GLOBAL_META_TITLE,
+          type: OPEN_GRAPH_GLOBAL_TYPE,
+          description: WELCOME_META_DESCRIPTION,
         }}
       />
 
@@ -58,8 +59,11 @@ const Welcome: NextPage<WelcomeProps> = ({ photoURL }) => {
           <Text>
             We{`'`}re still launching. If you are experiencing any issues with
             our platform please contact our support team at{" "}
-            <chakra.a textDecor={"underline"} href={"mailto:hi@polygon.am"}>
-              hi@polygon.am
+            <chakra.a
+              textDecor={"underline"}
+              href={"mailto:support@polygon.am"}
+            >
+              support@polygon.am
             </chakra.a>
           </Text>
         </Alert>

@@ -6,17 +6,21 @@ import {
   Button,
   Stack,
   Flex,
-  Heading,
   Divider,
   Center,
   Input,
+  Heading,
 } from "@chakra-ui/react";
-// import Head from "next/head";
+import util from "util";
+import {
+  OPEN_GRAPH_POST_TYPE,
+  POST_META_DESCRIPTION,
+  POST_META_TITLE,
+} from "../../constants";
 import { NextSeo } from "next-seo";
 import { ReactElement } from "react";
 import axios from "../../helpers/axios";
 import { RiHeart2Fill } from "react-icons/ri";
-import truncate from "../../helpers/truncate";
 import { formatDistanceToNow } from "date-fns";
 import { GetServerSideProps, NextPage } from "next";
 import PlatformLayout from "../../layouts/PlatformLayout";
@@ -32,12 +36,12 @@ export const getServerSideProps: GetServerSideProps<PostPage> = async ({
   params,
 }) => {
   // Getting post id from params
-  const { id } = params as any;
+  const { id } = params as { id: string };
 
   // Fetching post data and the comments associated with it
   const [post, comments] = await Promise.all([
-    await axios.get(`/api/posts/only/${id}`),
-    await axios.get(`/api/comments/${id}`),
+    await axios.get(`/api/posts/only/${id}/`),
+    await axios.get(`/api/comments/${id}/`),
   ]);
 
   // If everything is fine
@@ -56,12 +60,14 @@ export const getServerSideProps: GetServerSideProps<PostPage> = async ({
       permanent: true,
       destination: "/",
     },
+    notFound: post.status === 404 || comments.status === 404,
   };
 };
 
 const Post: NextPage<PostPage> = ({ post, comments }) => {
-  const metaTitle = `${post.user?.username}'s post`;
-  const [_, metaDescription] = truncate(post.body!!)[1];
+  const metaTitle = util.format(POST_META_TITLE, post.user.username);
+  // prettier-ignore
+  const metaDescription = util.format(POST_META_DESCRIPTION, post.user.username, post.title, post.content);
 
   return (
     <>
@@ -69,9 +75,14 @@ const Post: NextPage<PostPage> = ({ post, comments }) => {
         title={metaTitle}
         description={metaDescription}
         openGraph={{
-          type: "article",
           title: metaTitle,
+          type: OPEN_GRAPH_POST_TYPE,
           description: metaDescription,
+          profile: {
+            username: post.user.username,
+            lastName: post.user.last_name,
+            firstName: post.user.first_name,
+          },
           article: {
             authors: [post.user.username],
             publishedTime: String(post.created_at),
@@ -107,7 +118,8 @@ const Post: NextPage<PostPage> = ({ post, comments }) => {
                   </Flex>
 
                   <Box>
-                    <Text>{post.body!!}</Text>
+                    <Heading>{post.title!!}</Heading>
+                    <Text>{post.content!!}</Text>
                   </Box>
 
                   <Box>

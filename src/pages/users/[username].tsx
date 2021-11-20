@@ -1,17 +1,12 @@
-import {
-  Box,
-  Text,
-  Avatar,
-  Stack,
-  useClipboard,
-  useToast,
-} from "@chakra-ui/react";
+import util from "util";
 import { NextSeo } from "next-seo";
 import { ReactElement } from "react";
 import axios from "../../helpers/axios";
 import Post from "../../components/Post";
+import { USERS_META_DESCRIPTION, USERS_META_TITLE } from "../../constants";
 import { GetServerSideProps, NextPage } from "next";
 import PlatformLayout from "../../layouts/PlatformLayout";
+import { Box, Text, Avatar, Stack, useClipboard } from "@chakra-ui/react";
 
 // TODO: Fix with proper typing
 type ProfileProps = {
@@ -27,12 +22,16 @@ type ProfileProps = {
 export const getServerSideProps: GetServerSideProps<ProfileProps> = async ({
   params,
 }) => {
-  const { username } = params as any;
-  const [posts, user] = await Promise.all([
+  // Getting the `username` from server-side props
+  const { username } = params as { username: string };
+
+  // Fetching the user and their posts
+  const [user, posts] = await Promise.all([
+    await axios.get(`/api/users/${username}`),
     await axios.get(`/api/posts/${username}`),
-    await axios.get(`/api/accounts/${username}`),
   ]);
 
+  // If there are no issues with finding the user and their posts
   if (user.status === 200 && posts.status === 200) {
     // Only fetching relations if user a and their posts were found
     const [followers, following] = await Promise.all([
@@ -58,6 +57,7 @@ export const getServerSideProps: GetServerSideProps<ProfileProps> = async ({
     redirect: {
       permanent: true,
       destination: "/",
+      statusCode: user.status || posts.status,
     },
     notFound: user.status === 404,
   };
@@ -69,38 +69,25 @@ const Profile: NextPage<ProfileProps> = ({
   followers,
   following,
 }) => {
-  const toast = useToast({
-    duration: 2000,
-    isClosable: true,
-    variant: "subtle",
-    position: "bottom-start",
-  });
+  // Meta values
+  const metaTitle = util.format(USERS_META_TITLE, user.username);
+  const metaDescription = util.format(USERS_META_DESCRIPTION, user.username);
 
-  const { onCopy: onUsernameCopy, hasCopied: usernameWasCopied } = useClipboard(
-    user.username!!
-  );
-
-  const copyUsername = () => {
-    // Copying the username
-    onUsernameCopy();
-
-    return toast({
-      status: "info",
-      title: "Copied the username to the clipboard",
-    });
-  };
+  // prettier-ignore
+  const { onCopy: copyUsername, hasCopied: usernameCopied } = useClipboard(user.username!!);
 
   return (
     <>
       <NextSeo
-        title={user.username}
-        defaultTitle={user.username}
+        title={metaTitle}
+        description={metaDescription}
         openGraph={{
-          title: user.username,
+          title: metaTitle,
+          description: metaDescription,
           profile: {
-            firstName: user.firstName,
             lastName: user.lastName,
             username: user.username,
+            firstName: user.firstName,
           },
         }}
       />
@@ -121,7 +108,7 @@ const Profile: NextPage<ProfileProps> = ({
                     <Text
                       cursor={"pointer"}
                       color={"gray.300"}
-                      onClick={copyUsername}
+                      onClick={() => copyUsername()}
                     >
                       @{user.username}
                     </Text>
