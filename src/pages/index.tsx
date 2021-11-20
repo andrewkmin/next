@@ -9,9 +9,9 @@ import {
   Button,
 } from "@chakra-ui/react";
 import {
-  GLOBAL_META_DESCRIPTION,
   GLOBAL_META_TITLE,
   OPEN_GRAPH_GLOBAL_TYPE,
+  GLOBAL_META_DESCRIPTION,
 } from "../constants";
 import { NextPage } from "next";
 import { NextSeo } from "next-seo";
@@ -21,24 +21,25 @@ import { useVirtual } from "react-virtual";
 import { ReactElement, useRef } from "react";
 import { useInfiniteQuery } from "react-query";
 import PlatformLayout from "../layouts/PlatformLayout";
-// import { useInView } from "react-intersection-observer";
+import { useInView } from "react-intersection-observer";
 
 type Response = {
+  data: any;
   next: string | null;
   prev: string | null;
-  data: any;
 };
 
 const Index: NextPage = () => {
   const toast = useToast();
   const {
-    data,
     isLoading,
     isFetching,
     hasNextPage,
-    fetchNextPage,
     isPreviousData,
     isFetchingNextPage,
+
+    data,
+    fetchNextPage,
   } = useInfiniteQuery(
     "posts",
     async ({ pageParam = null }) => {
@@ -67,7 +68,7 @@ const Index: NextPage = () => {
   );
 
   // TODO: Fix typings
-  const flatPosts: any = [];
+  const flatPosts: any[] = [];
   if (data?.pages) data?.pages?.map((page) => flatPosts.concat(page.data));
 
   // Initialize `react-virtual`
@@ -80,8 +81,8 @@ const Index: NextPage = () => {
         : data?.pages.length!!,
   });
 
-  // Intersection watcher
-  // const [buttonViewportRef, buttonInView] = useInView();
+  // Intersection watcher for the `load more` button
+  const [buttonViewportRef, _buttonInView] = useInView();
 
   return (
     <>
@@ -118,10 +119,7 @@ const Index: NextPage = () => {
                   </Box>
                 )}
 
-                <Button
-                  // ref={buttonViewportRef}
-                  onClick={() => fetchNextPage()}
-                >
+                <Button ref={buttonViewportRef} onClick={() => fetchNextPage()}>
                   Load more
                 </Button>
               </Stack>

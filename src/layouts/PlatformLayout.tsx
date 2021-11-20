@@ -8,10 +8,10 @@ interface PlatformLayoutProps {
 
 const PlatformLayout = ({ children }: PlatformLayoutProps) => {
   return (
-    <Box>
+    <>
       <Navbar />
       <Box>{children}</Box>
-    </Box>
+    </>
   );
 };
 

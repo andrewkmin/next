@@ -9,9 +9,9 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import {
-  CREATE_POST_META_DESCRIPTION,
   CREATE_POST_META_TITLE,
   OPEN_GRAPH_GLOBAL_TYPE,
+  CREATE_POST_META_DESCRIPTION,
 } from "../constants";
 import { NextPage } from "next";
 import { NextSeo } from "next-seo";
@@ -49,16 +49,13 @@ const Create: NextPage = () => {
               <Stack spacing={4}>
                 <Box>
                   <Textarea
-                    rows={10}
+                    rows={3}
                     size={"lg"}
                     rounded={"xl"}
                     resize={"none"}
                     {...register("body", {
                       required: true,
                     })}
-                    placeholder={
-                      "Hello world, created to work and not to feeeeeel..."
-                    }
                   />
                 </Box>
 
