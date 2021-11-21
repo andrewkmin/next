@@ -32,7 +32,7 @@ type Response = {
 
 const Index: NextPage = () => {
   const toast = useToast();
-  const { accessToken } = useTokenStore.getState();
+  const accessToken = useTokenStore(({ accessToken }) => accessToken);
 
   const {
     data,
