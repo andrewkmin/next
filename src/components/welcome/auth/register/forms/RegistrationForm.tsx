@@ -10,10 +10,10 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import axios from "../../../../../helpers/axios";
 import EmailSentView from "../components/EmailSentView";
-// import { email as emailPattern } from "../../../../utils/patterns";
 
 export type Inputs = {
   email: string;
@@ -31,40 +31,39 @@ const RegistrationForm = () => {
     formState: { errors },
     getValues,
   } = useForm<Inputs>();
-  const toast = useToast({ position: "bottom-left" });
+  const toast = useToast();
   const [emailWasSent, setEmailWasSent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // For registering
   const handleRegistration = async (payload: Inputs) => {
     setIsSubmitting(true);
-    const response = await axios.post("/auth/register", payload);
-    setIsSubmitting(false);
 
-    toast.closeAll();
+    try {
+      await axios.post("/auth/register", payload);
+      setEmailWasSent(true);
+    } catch (__error) {
+      const error = __error as AxiosError;
 
-    // Checking response status
-    if (response.status !== 204) {
-      const { status, data } = response;
-
-      if (status === 400) {
-        const errorResponse = data as {
+      if (error.response?.status === 400) {
+        const errorResponse = error.response.data as {
           errors: [{ param: string; msg: string }];
         };
+
         errorResponse.errors?.forEach((error) =>
           setError(error.param as any, { message: error.msg })
         );
-      } else if (status === 403) {
+      } else if (error.response?.status === 403) {
         setError("email", { message: "Email is taken" });
         setError("username", { message: "Username is taken" });
       } else {
         toast({
           status: "error",
-          isClosable: false,
           title: "There was an error",
         });
       }
-    } else return setEmailWasSent(true);
+    }
+
+    setIsSubmitting(false);
   };
 
   return emailWasSent ? (
@@ -76,6 +75,7 @@ const RegistrationForm = () => {
           <Stack>
             <FormControl isInvalid={errors.username && true}>
               <FormLabel>Username</FormLabel>
+
               <Input
                 size={"lg"}
                 type={"text"}
@@ -86,6 +86,7 @@ const RegistrationForm = () => {
                 })}
                 isInvalid={errors.username && true}
               />
+
               <FormErrorMessage>
                 {errors?.username?.message || "Invalid username"}
               </FormErrorMessage>
@@ -95,12 +96,14 @@ const RegistrationForm = () => {
               <Box>
                 <FormControl isInvalid={errors.firstName && true}>
                   <FormLabel>First Name</FormLabel>
+
                   <Input
                     size={"lg"}
                     type={"text"}
                     placeholder={"First Name"}
                     {...register("firstName", { required: true })}
                   />
+
                   <FormErrorMessage>
                     {errors.lastName && "Invalid name"}
                   </FormErrorMessage>
@@ -110,12 +113,14 @@ const RegistrationForm = () => {
               <Box>
                 <FormControl isInvalid={errors.lastName && true}>
                   <FormLabel>Last Name</FormLabel>
+
                   <Input
                     size={"lg"}
                     type={"text"}
                     placeholder={"Last Name"}
                     {...register("lastName", { required: true })}
                   />
+
                   <FormErrorMessage>
                     {errors.lastName && "Invalid name"}
                   </FormErrorMessage>
@@ -125,6 +130,7 @@ const RegistrationForm = () => {
 
             <FormControl isInvalid={errors?.email && true}>
               <FormLabel>Email</FormLabel>
+
               <Input
                 size={"lg"}
                 type={"email"}

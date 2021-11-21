@@ -97,7 +97,7 @@ const Index: NextPage = () => {
               <Heading>Timeline</Heading>
 
               <Stack spacing={4}>
-                <Stack ref={virtualParentRef}>
+                <Stack spacing={4} ref={virtualParentRef}>
                   {virtual.virtualItems.map((item) => {
                     return data?.pages[item?.index]?.data?.map((item) => {
                       return <MemoizedPost key={item.id} data={item} />;

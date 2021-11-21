@@ -12,6 +12,7 @@ const ModalTrigger = ({ registrationOnOpen }: ModalTriggerProps) => {
         <Button
           w={"full"}
           size={"lg"}
+          border={"2px"}
           fontWeight={"bold"}
           variant={"outline"}
           borderRadius={"full"}
