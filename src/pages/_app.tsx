@@ -4,8 +4,6 @@ import type { AppProps } from "next/app";
 import { ReactElement, ReactNode } from "react";
 import GlobalStyles from "../theme/GlobalStyles";
 import SharedLayout from "../layouts/SharedLayout";
-import { AuthProvider } from "../contexts/AuthContext";
-import { UserProvider } from "../contexts/UserContext";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
@@ -13,10 +11,12 @@ import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 /**
  * For supporting page layouts
  */
+// Declaring as a type since we don't need to extend it somewhere
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
 
+// Declaring as a type since we don't need to extend it somewhere
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
@@ -43,18 +43,11 @@ const Polygon = ({ Component, pageProps }: AppPropsWithLayout) => {
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
 
       <SharedLayout>
-        <AuthProvider>
-          <UserProvider>
-            <QueryClientProvider client={queryClient}>
-              {getLayout(<Component {...pageProps} />)}
+        <QueryClientProvider client={queryClient}>
+          {getLayout(<Component {...pageProps} />)}
 
-              <ReactQueryDevtools
-                initialIsOpen={false}
-                position={"bottom-left"}
-              />
-            </QueryClientProvider>
-          </UserProvider>
-        </AuthProvider>
+          <ReactQueryDevtools initialIsOpen={false} position={"bottom-left"} />
+        </QueryClientProvider>
       </SharedLayout>
     </ChakraProvider>
   );

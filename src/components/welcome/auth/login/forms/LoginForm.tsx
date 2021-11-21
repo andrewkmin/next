@@ -7,20 +7,28 @@ import {
   FormLabel,
   FormErrorMessage,
 } from "@chakra-ui/react";
+import create from "zustand";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import {
-  useState,
-  useContext
-} from "react";
 import LoginButton from "../buttons/LoginButton";
-import axios from "../../../../../helpers/axios";
-import { UserContext } from "../../../../../contexts/UserContext";
-import { AuthContext } from "../../../../../contexts/AuthContext";
+import { useUser } from "../../../../../stores/useUser";
+import axios, { setAxiosBearerToken } from "../../../../../helpers/axios";
 
+const useSubmitting = create<Submitting>((set) => ({
+  submitting: false,
+  toggle: () => set(({ submitting }) => ({ submitting: !submitting })),
+}));
+
+// Declaring as a type since we don't need to extend it somewhere
 type Inputs = {
   email: string;
   password: string;
+};
+
+// Declaring as a type since we don't need to extend it somewhere
+type Submitting = {
+  submitting: boolean;
+  toggle: () => void;
 };
 
 // Login form component
@@ -31,39 +39,36 @@ const LoginForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
+
+  const toast = useToast();
   const router = useRouter();
-  const { setUser } = useContext(UserContext);
-  const { setToken } = useContext(AuthContext);
-  const toast = useToast({ position: "bottom-left" });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const setUser = useUser((state) => state.setUser);
+  const isSubmitting = useSubmitting((state) => state.submitting);
+  const toggleSubmitting = useSubmitting((state) => state.toggle);
 
   // For handling the login
   const handleLogin = async (payload: Inputs) => {
-    setIsSubmitting(true);
+    toggleSubmitting();
 
-    const tokenResponse = await axios.post("/auth/login", payload);
+    // prettier-ignore
+    const { status: authStatus, data: authData } = await axios.post("/auth/login", payload);
+    toggleSubmitting();
 
-    setIsSubmitting(false);
-
-    if (tokenResponse.status !== 200) {
-      const { status, data } = tokenResponse;
-
+    if (authStatus !== 200) {
       // If there are invalid fields
-      if (status === 400) {
-        const errorResponse = data as {
+      if (authStatus === 400) {
+        const errorResponse = authData as {
           errors: [{ param: string; msg: string }];
         };
 
         return errorResponse?.errors?.forEach((error) =>
           setError(error.param as any, { message: error.msg })
         );
-      }
-      // If the credentials are invalid
-      else if (status === 403) {
+      } else if (authStatus === 403) {
+        // If the credentials are invalid
         return setError("password", { message: "Incorrect password" });
-      }
-      // If user doesn't exist
-      else if (status === 404) {
+      } else if (authStatus === 404) {
+        // If user doesn't exist
         return setError("email", { message: "That account doesn't exist" });
       } else {
         return toast({
@@ -73,11 +78,15 @@ const LoginForm = () => {
         });
       }
     } else {
-      setToken(tokenResponse.data.token!!);
-      // // Fetching user data
-      const { data: user } = await axios.get("/api/accounts/me");
+      // Updating the bearer token
+      setAxiosBearerToken(authData.token);
+
+      // Fetching and setting current user
+      const { data: user } = await axios.get("/api/users/me");
       setUser(user);
-      await router.push("/");
+
+      // Redirect to the main page
+      return await router.push("/");
     }
   };
 
@@ -89,15 +98,19 @@ const LoginForm = () => {
             {/* Email input */}
             <FormControl isInvalid={errors?.email && true}>
               <FormLabel>Email</FormLabel>
+
               <Input
                 size={"lg"}
                 type={"email"}
                 placeholder={"Email"}
                 {...register("email", {
                   required: true,
-                  pattern: new RegExp(""),
+                  pattern:
+                    // RFC email RegEx pattern
+                    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
                 })}
               />
+
               <FormErrorMessage>
                 {errors?.email?.message || "Invalid email"}
               </FormErrorMessage>
@@ -106,12 +119,14 @@ const LoginForm = () => {
             {/* Password Input */}
             <FormControl isInvalid={errors?.password && true}>
               <FormLabel>Password</FormLabel>
+
               <Input
                 size={"lg"}
                 type={"password"}
                 placeholder={"Password"}
                 {...register("password", { minLength: 8, required: true })}
               />
+
               <FormErrorMessage>
                 {errors?.password?.message ||
                   "Should be at least 8 characters long"}

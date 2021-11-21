@@ -9,18 +9,23 @@ import {
   Text,
   Avatar,
 } from "@chakra-ui/react";
+import { memo } from "react";
 import NextLink from "next/link";
-import truncate from "../../helpers/truncate";
+import truncate from "../../lib/truncate";
+import { User } from "../../stores/useUser";
 import { formatDistanceToNow } from "date-fns";
 import { FiExternalLink } from "react-icons/fi";
 import { RiHeart2Fill, RiChat2Fill } from "react-icons/ri";
 
-// TODO: Fix with proper typing
-interface PostProps {
-  data: any;
+export interface Post {
+  id: string;
+  title: string;
+  content?: string;
+  created_at: string;
 }
 
-const Post = ({ data, ...rest }: PostProps) => {
+// prettier-ignore
+const Component = ({ data, ...rest }: { data: Partial<Post> & { user: Partial<User> } }) => {
   // Shortening post text
   const [isTruncated, body] = truncate(data?.content!!);
 
@@ -35,7 +40,6 @@ const Post = ({ data, ...rest }: PostProps) => {
                   <Avatar
                     rounded={"full"}
                     boxSize={"45px"}
-                    src={data.user?.avatar}
                     name={data.user?.username!!}
                   />
                 </Link>
@@ -120,4 +124,5 @@ const Post = ({ data, ...rest }: PostProps) => {
   );
 };
 
-export default Post;
+export default Component;
+export const MemoizedPost = memo(Component);

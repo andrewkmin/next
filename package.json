@@ -23,7 +23,8 @@
     "react-icons": "^4.2.0",
     "react-intersection-observer": "^8.32.2",
     "react-query": "^3.32.3",
-    "react-virtual": "^2.8.2"
+    "react-virtual": "^2.8.2",
+    "zustand": "^3.6.5"
   },
   "devDependencies": {
     "@types/cookie": "^0.4.1",

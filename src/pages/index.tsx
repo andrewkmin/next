@@ -16,30 +16,30 @@ import {
 import { NextPage } from "next";
 import { NextSeo } from "next-seo";
 import axios from "../helpers/axios";
-import Post from "../components/Post";
+import { User } from "../stores/useUser";
 import { useVirtual } from "react-virtual";
 import { ReactElement, useRef } from "react";
 import { useInfiniteQuery } from "react-query";
+import { MemoizedPost, Post } from "../components/Post";
 import PlatformLayout from "../layouts/PlatformLayout";
-import { useInView } from "react-intersection-observer";
 
 type Response = {
-  data: any;
   next: string | null;
   prev: string | null;
+  data: (Partial<Post> & { user: Partial<User> })[];
 };
 
 const Index: NextPage = () => {
   const toast = useToast();
+
   const {
+    data,
     isLoading,
     isFetching,
     hasNextPage,
+    fetchNextPage,
     isPreviousData,
     isFetchingNextPage,
-
-    data,
-    fetchNextPage,
   } = useInfiniteQuery(
     "posts",
     async ({ pageParam = null }) => {
@@ -67,12 +67,9 @@ const Index: NextPage = () => {
     }
   );
 
-  // TODO: Fix typings
-  const flatPosts: any[] = [];
-  if (data?.pages) data?.pages?.map((page) => flatPosts.concat(page.data));
-
+  // Create a ref for the virtual parent
+  const virtualParentRef = useRef(null);
   // Initialize `react-virtual`
-  const virtualParentRef = useRef<any>(null);
   const virtual = useVirtual({
     parentRef: virtualParentRef,
     size:
@@ -80,9 +77,6 @@ const Index: NextPage = () => {
         ? data?.pages.length!! + 1
         : data?.pages.length!!,
   });
-
-  // Intersection watcher for the `load more` button
-  const [buttonViewportRef, _buttonInView] = useInView();
 
   return (
     <>
@@ -105,21 +99,30 @@ const Index: NextPage = () => {
               <Stack spacing={4}>
                 <Stack ref={virtualParentRef}>
                   {virtual.virtualItems.map((item) => {
-                    return data?.pages[item?.index]?.data?.map((item: any) => {
-                      return <Post key={item.id} data={item} />;
+                    return data?.pages[item?.index]?.data?.map((item) => {
+                      return <MemoizedPost key={item.id} data={item} />;
                     });
                   })}
                 </Stack>
 
-                {(isLoading || isFetching || isFetchingNextPage) && (
-                  <Box>
-                    <Center>
-                      <Spinner />
-                    </Center>
-                  </Box>
-                )}
+                {(isLoading || isFetching || isFetchingNextPage) &&
+                  hasNextPage && (
+                    <Box>
+                      <Center>
+                        <Spinner />
+                      </Center>
+                    </Box>
+                  )}
 
-                <Button ref={buttonViewportRef} onClick={() => fetchNextPage()}>
+                <Button
+                  disabled={
+                    isFetching ||
+                    !hasNextPage ||
+                    isPreviousData ||
+                    isFetchingNextPage
+                  }
+                  onClick={() => hasNextPage && fetchNextPage()}
+                >
                   Load more
                 </Button>
               </Stack>
