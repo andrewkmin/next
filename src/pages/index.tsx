@@ -20,8 +20,8 @@ import { User } from "../stores/useUser";
 import { useVirtual } from "react-virtual";
 import { ReactElement, useRef } from "react";
 import { useInfiniteQuery } from "react-query";
-import { MemoizedPost, Post } from "../components/Post";
 import PlatformLayout from "../layouts/PlatformLayout";
+import { MemoizedPost, Post } from "../components/Post";
 
 type Response = {
   next: string | null;

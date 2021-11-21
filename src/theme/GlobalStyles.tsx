@@ -6,7 +6,7 @@ const GlobalStyles = () => (
       ::selection {
           background: rgba(159, 122, 234, 0.7);
       }
-      `}
+    `}
   />
 );
 
