@@ -11,8 +11,8 @@ import {
 } from "@chakra-ui/react";
 import { memo } from "react";
 import NextLink from "next/link";
-import truncate from "../../lib/truncate";
-import { User } from "../../stores/useUser";
+import truncate from "../lib/truncate";
+import { User } from "../stores/useUser";
 import { formatDistanceToNow } from "date-fns";
 import { FiExternalLink } from "react-icons/fi";
 import { RiHeart2Fill, RiChat2Fill } from "react-icons/ri";
@@ -73,15 +73,16 @@ const Component = ({ data, ...rest }: { data: Partial<Post> & { user: Partial<Us
           </Flex>
         </Box>
 
-        <Box>
-          <Text>
-            {body}{" "}
+        <Box overflowY={"scroll"}>
+          <pre>
+            {JSON.stringify(data, null, 4)}
+            {/* {body}{" "}
             {isTruncated && (
               <NextLink passHref href={`/posts/${data.id!!}`}>
                 <Link color={"purple.500"}>Read more</Link>
               </NextLink>
-            )}
-          </Text>
+            )} */}
+          </pre>
         </Box>
 
         <Box>
@@ -124,5 +125,6 @@ const Component = ({ data, ...rest }: { data: Partial<Post> & { user: Partial<Us
   );
 };
 
-export default Component;
-export const MemoizedPost = memo(Component);
+// Exporting memoized component by default since,
+// re-rendering a post multiple times with Chakra UI is expensive
+export const Post = memo(Component);

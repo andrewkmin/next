@@ -17,11 +17,12 @@ import { NextPage } from "next";
 import { NextSeo } from "next-seo";
 import axios from "../helpers/axios";
 import { User } from "../stores/useUser";
+import { Post } from "../components/Post";
 import { useVirtual } from "react-virtual";
 import { ReactElement, useRef } from "react";
 import { useInfiniteQuery } from "react-query";
 import PlatformLayout from "../layouts/PlatformLayout";
-import { MemoizedPost, Post } from "../components/Post";
+import { useTokenStore } from "../stores/useTokenStore";
 
 type Response = {
   next: string | null;
@@ -31,6 +32,7 @@ type Response = {
 
 const Index: NextPage = () => {
   const toast = useToast();
+  const { accessToken } = useTokenStore.getState();
 
   const {
     data,
@@ -45,7 +47,11 @@ const Index: NextPage = () => {
     async ({ pageParam = null }) => {
       // prettier-ignore
       const path = `/api/discover/posts/${pageParam ? `?cursor=${pageParam}` : ""}`;
-      const { data } = await axios.get<Response>(path);
+      const { data } = await axios.get<Response>(path, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       return data;
     },
     {
@@ -100,7 +106,7 @@ const Index: NextPage = () => {
                 <Stack spacing={4} ref={virtualParentRef}>
                   {virtual.virtualItems.map((item) => {
                     return data?.pages[item?.index]?.data?.map((item) => {
-                      return <MemoizedPost key={item.id} data={item} />;
+                      return <Post key={item.id} data={item} />;
                     });
                   })}
                 </Stack>

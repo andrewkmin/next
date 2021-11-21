@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import LoginButton from "../buttons/LoginButton";
 import { useUser } from "../../../../../stores/useUser";
 import axios, { setAxiosBearerToken } from "../../../../../helpers/axios";
+import { useTokenStore } from "../../../../../stores/useTokenStore";
 
 const useSubmitting = create<Submitting>((set) => ({
   submitting: false,
@@ -39,12 +40,14 @@ const LoginForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
-
   const toast = useToast();
   const router = useRouter();
-  const setUser = useUser((state) => state.setUser);
-  const isSubmitting = useSubmitting((state) => state.submitting);
-  const toggleSubmitting = useSubmitting((state) => state.toggle);
+
+  // Stores
+  const setUser = useUser(({ setUser }) => setUser);
+  const setTokens = useTokenStore(({ setTokens }) => setTokens);
+  // prettier-ignore
+  const [isSubmitting, toggleSubmitting] = useSubmitting(({ submitting, toggle }) => [submitting, toggle]);
 
   // For handling the login
   const handleLogin = async (payload: Inputs) => {
@@ -80,6 +83,7 @@ const LoginForm = () => {
     } else {
       // Updating the bearer token
       setAxiosBearerToken(authData.token);
+      setTokens({ accessToken: authData.token, refreshToken: "" });
 
       // Fetching and setting current user
       const { data: user } = await axios.get("/api/users/me");

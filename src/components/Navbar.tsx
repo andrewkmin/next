@@ -8,8 +8,11 @@ import {
   Badge,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useUser } from "../stores/useUser";
 
-const Navbar = () => {
+export const Navbar = () => {
+  const user = useUser(({ user }) => user);
+
   return (
     <Box role={"navigation"} as={"nav"} top={0} pos={"sticky"}>
       <Box bgColor={"gray.900"} p={2} pb={[4, 2]}>
@@ -41,9 +44,11 @@ const Navbar = () => {
               </Badge>
             </Box>
           </Stack>
-
-          {/* <Box>{JSON.stringify(user)}</Box> */}
         </Flex>
+      </Box>
+
+      <Box m={2}>
+        <pre>{JSON.stringify(user, null, 4)}</pre>
       </Box>
 
       {/* Progress bar */}
@@ -56,5 +61,3 @@ const Navbar = () => {
     </Box>
   );
 };
-
-export default Navbar;

@@ -2,22 +2,20 @@ import util from "util";
 import { NextSeo } from "next-seo";
 import { ReactElement } from "react";
 import axios from "../../helpers/axios";
-import Post from "../../components/Post";
-import { USERS_META_DESCRIPTION, USERS_META_TITLE } from "../../constants";
+import { Post } from "../../components/Post";
 import { GetServerSideProps, NextPage } from "next";
 import PlatformLayout from "../../layouts/PlatformLayout";
 import { Box, Text, Avatar, Stack, useClipboard } from "@chakra-ui/react";
+import { USERS_META_DESCRIPTION, USERS_META_TITLE } from "../../constants";
+import { User } from "../../stores/useUser";
+import { useTokenStore } from "../../stores/useTokenStore";
 
-// TODO: Fix with proper typing
 type ProfileProps = {
-  user: any;
-  posts: any[];
-  followers: any[];
-  following: any[];
+  user: Partial<User>;
+  followers: Partial<User>[];
+  following: Partial<User>[];
+  posts: Partial<Post & { user: Partial<User> }>[];
 };
-
-// const DEFAULT_BACKGROUND_URL =
-// "https://images.unsplash.com/photo-1603118675111-239b194fb8d8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=100";
 
 export const getServerSideProps: GetServerSideProps<ProfileProps> = async ({
   params,
@@ -69,12 +67,14 @@ const Profile: NextPage<ProfileProps> = ({
   followers,
   following,
 }) => {
+  const token = useTokenStore((state) => state.accessToken);
+  console.log(token);
+
   // Meta values
   const metaTitle = util.format(USERS_META_TITLE, user.username);
   const metaDescription = util.format(USERS_META_DESCRIPTION, user.username);
-
   // prettier-ignore
-  const { onCopy: copyUsername, hasCopied: usernameCopied } = useClipboard(user.username!!);
+  const { onCopy: copyUsername, hasCopied: _ } = useClipboard(user.username!!);
 
   return (
     <>
@@ -85,9 +85,9 @@ const Profile: NextPage<ProfileProps> = ({
           title: metaTitle,
           description: metaDescription,
           profile: {
-            lastName: user.lastName,
             username: user.username,
-            firstName: user.firstName,
+            lastName: user.last_name,
+            firstName: user.first_name,
           },
         }}
       />
@@ -97,7 +97,7 @@ const Profile: NextPage<ProfileProps> = ({
           <Stack spacing={8}>
             <Box>
               <Stack spacing={4} direction={"row"} alignItems={"center"}>
-                <Avatar size={"xl"} src={user.cover} name={user.username!!} />
+                <Avatar size={"xl"} name={user.username} />
 
                 <Stack spacing={-1}>
                   <Text fontSize={"2xl"}>

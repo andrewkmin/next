@@ -3,6 +3,7 @@ import { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { ReactElement, ReactNode } from "react";
 import GlobalStyles from "../theme/GlobalStyles";
+import AuthContext from "../contexts/AuthContext";
 import SharedLayout from "../layouts/SharedLayout";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -43,11 +44,16 @@ const Polygon = ({ Component, pageProps }: AppPropsWithLayout) => {
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
 
       <SharedLayout>
-        <QueryClientProvider client={queryClient}>
-          {getLayout(<Component {...pageProps} />)}
+        <AuthContext>
+          <QueryClientProvider client={queryClient}>
+            {getLayout(<Component {...pageProps} />)}
 
-          <ReactQueryDevtools initialIsOpen={false} position={"bottom-left"} />
-        </QueryClientProvider>
+            <ReactQueryDevtools
+              initialIsOpen={false}
+              position={"bottom-left"}
+            />
+          </QueryClientProvider>
+        </AuthContext>
       </SharedLayout>
     </ChakraProvider>
   );
