@@ -7,14 +7,13 @@ import {
   Stack,
   Badge,
 } from "@chakra-ui/react";
+import { memo } from "react";
+import { User } from "./User";
 import NextLink from "next/link";
-import { useUser } from "../stores/useUser";
 
-export const Navbar = () => {
-  const user = useUser(({ user }) => user);
-
+const Component = () => {
   return (
-    <Box role={"navigation"} as={"nav"} top={0} pos={"sticky"}>
+    <Box zIndex={"tooltip"} role={"navigation"} as={"nav"} top={0} pos={"sticky"}>
       <Box bgColor={"gray.900"} p={2} pb={[4, 2]}>
         <Flex justify={"space-between"}>
           <Stack
@@ -44,11 +43,9 @@ export const Navbar = () => {
               </Badge>
             </Box>
           </Stack>
-        </Flex>
-      </Box>
 
-      <Box m={2}>
-        <pre>{JSON.stringify(user, null, 4)}</pre>
+          <User />
+        </Flex>
       </Box>
 
       {/* Progress bar */}
@@ -61,3 +58,6 @@ export const Navbar = () => {
     </Box>
   );
 };
+
+// Memoizing the navbar to improve the performance
+export const Navbar = memo(Component);

@@ -6,16 +6,16 @@
 // prettier-ignore
 const truncate = (text: string, maxLength: number = 300): [
   /**
+   * Truncated string
+   */
+  string,
+  /**
    * Whether or not the text has been manipulated
    */
   boolean,
-  /**
-   * Truncated string
-   */
-  string
 ] => {
-  if (text.length <= maxLength) return [false, text];
-  return [true, text.substring(0, maxLength).trim() + "..."];
+  if (text.length <= maxLength) return [text, false];
+  return [text.substring(0, maxLength).trim() + "...", true];
 };
 
 export default truncate;

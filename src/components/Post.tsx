@@ -1,126 +1,118 @@
 import {
-  Tooltip,
   Button,
-  IconButton,
   Box,
   Flex,
-  Link,
   Stack,
   Text,
-  Avatar,
+  Icon,
+  Heading,
+  Tooltip,
+  IconButton,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
-import { memo } from "react";
 import NextLink from "next/link";
+import { format } from "date-fns";
 import truncate from "../lib/truncate";
+import { memo, useState } from "react";
 import { User } from "../stores/useUser";
-import { formatDistanceToNow } from "date-fns";
-import { FiExternalLink } from "react-icons/fi";
-import { RiHeart2Fill, RiChat2Fill } from "react-icons/ri";
+import { MdMoreHoriz } from "react-icons/md";
+import { TiArrowUpThick } from "react-icons/ti";
+import { IoMdChatbubbles } from "react-icons/io";
 
 export interface Post {
   id: string;
   title: string;
   content?: string;
+  upvoted: boolean;
   created_at: string;
+  upvote_count: number;
+  comment_count: number;
 }
 
-// prettier-ignore
-const Component = ({ data, ...rest }: { data: Partial<Post> & { user: Partial<User> } }) => {
-  // Shortening post text
-  const [isTruncated, body] = truncate(data?.content!!);
+interface Props {
+  data: Partial<Post> & { user: Partial<User> };
+}
+
+const Component = ({ data }: Props) => {
+  const [state, setState] = useState(data);
+  // Truncating post content
+  const [content, contentTruncated] = truncate(state?.content!!, 150);
 
   return (
-    <Box p={4} {...rest} rounded={"2xl"} boxShadow={"lg"} bgColor={"gray.900"}>
-      <Stack spacing={3}>
-        <Box>
-          <Flex alignItems={"center"} justifyContent={"space-between"}>
-            <Stack alignItems={"center"} direction={"row"} spacing={2.5}>
-              <NextLink href={`/users/${data.user?.username!!}`} passHref>
-                <Link rounded={"full"}>
-                  <Avatar
-                    rounded={"full"}
-                    boxSize={"45px"}
-                    name={data.user?.username!!}
-                  />
-                </Link>
-              </NextLink>
+    <Box>
+      <Box
+        p={3}
+        rounded={"xl"}
+        border={"2px"}
+        boxShadow={"xl"}
+        borderColor={"gray.700"}
+      >
+        <Stack direction={"row"}>
+          <Box>
+            <Stack>
+              <Box>
+                <Stack>
+                  <Heading fontSize={"2xl"} color={"gray.100"}>
+                    {state?.title}
+                  </Heading>
 
-              <NextLink passHref href={`/users/${data.user?.username!!}`}>
-                <Link
-                  p={1}
-                  rounded={"lg"}
-                  style={{
-                    textDecoration: "none",
-                  }}
-                >
-                  <Tooltip label={`${data.user?.username!!}'s profile`}>
-                    <Text userSelect={"none"} fontWeight={"bold"}>
-                      @{data.user?.username}
-                    </Text>
-                  </Tooltip>
-                </Link>
-              </NextLink>
+                  <Text
+                    fontWeight={"semibold"}
+                    color={"gray.200"}
+                    fontSize={"sm"}
+                  >
+                    {content}
+                  </Text>
+                </Stack>
+              </Box>
+
+              <Box>
+                <Flex justifyContent={"space-between"} alignItems={"center"}>
+                  <Box>
+                    <Tooltip label={String(data?.created_at!!)}>
+                      <Text fontWeight={"semibold"} fontSize={"sm"}>
+                        {format(new Date(data?.created_at!!), "d LLL yyyy")}
+                      </Text>
+                    </Tooltip>
+                  </Box>
+
+                  {contentTruncated && (
+                    <Box>
+                      <NextLink passHref href={`/posts/${state.id!!}`}>
+                        <ChakraLink color={"blue.400"}>Read more</ChakraLink>
+                      </NextLink>
+                    </Box>
+                  )}
+                </Flex>
+              </Box>
             </Stack>
+          </Box>
 
-            <Stack userSelect={"none"} alignItems={"center"}>
-              <Text fontWeight={"bold"} fontSize={"xs"}>
-                {formatDistanceToNow(new Date(data.created_at!!), {
-                  addSuffix: true,
-                  includeSeconds: true,
-                })}
-              </Text>
-            </Stack>
-          </Flex>
-        </Box>
+          <Stack>
+            <Button
+              size={"sm"}
+              rounded={"xl"}
+              aria-label={"Upvote"}
+              alignItems={"center"}
+              leftIcon={<TiArrowUpThick />}
+              colorScheme={state?.upvoted ? "red" : "gray"}
+            >
+              {state?.upvote_count}
+            </Button>
 
-        <Box overflowY={"scroll"}>
-          <pre>
-            {JSON.stringify(data, null, 4)}
-            {/* {body}{" "}
-            {isTruncated && (
-              <NextLink passHref href={`/posts/${data.id!!}`}>
-                <Link color={"purple.500"}>Read more</Link>
-              </NextLink>
-            )} */}
-          </pre>
-        </Box>
-
-        <Box>
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            justifyContent={"space-between"}
-          >
-            <Stack direction={"row"}>
-              <Button rounded={"full"} leftIcon={<RiHeart2Fill />}>
-                Heart
-              </Button>
-
-              <Tooltip label={"Comments"}>
-                <IconButton
-                  isRound
-                  icon={<RiChat2Fill />}
-                  aria-label={"Comments"}
-                />
-              </Tooltip>
-            </Stack>
-
-            <Box>
-              <NextLink href={`/posts/${data.id!!}`} passHref>
-                <Link>
-                  <Tooltip label={"Open post"}>
-                    <IconButton
-                      isRound
-                      aria-label={"Open post"}
-                      icon={<FiExternalLink />}
-                    />
-                  </Tooltip>
-                </Link>
-              </NextLink>
-            </Box>
+            <Button
+              size={"sm"}
+              rounded={"xl"}
+              bgColor={"gray.700"}
+              alignItems={"center"}
+              aria-label={"Comments"}
+              leftIcon={<Icon as={IoMdChatbubbles} color={"blue.400"} />}
+            >
+              {state?.comment_count}
+            </Button>
           </Stack>
-        </Box>
-      </Stack>
+        </Stack>
+      </Box>
     </Box>
   );
 };
