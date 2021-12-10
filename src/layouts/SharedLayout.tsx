@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
 import { Box } from "@chakra-ui/react";
+import { memo, ReactNode } from "react";
 
 interface SharedLayoutProps {
   children: ReactNode;
@@ -13,4 +13,4 @@ const SharedLayout = ({ children }: SharedLayoutProps) => {
   );
 };
 
-export default SharedLayout;
+export default memo(SharedLayout);

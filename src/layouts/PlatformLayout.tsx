@@ -1,5 +1,5 @@
-import { ReactElement } from "react";
 import { Box } from "@chakra-ui/react";
+import { memo, ReactElement } from "react";
 import { Navbar } from "../components/Navbar";
 
 interface PlatformLayoutProps {
@@ -15,4 +15,4 @@ const PlatformLayout = ({ children }: PlatformLayoutProps) => {
   );
 };
 
-export default PlatformLayout;
+export default memo(PlatformLayout);

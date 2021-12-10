@@ -9,8 +9,8 @@ import {
   Button,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { AxiosError } from "axios";
+import { memo, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "../../../../../helpers/axios";
 import EmailSentView from "../components/EmailSentView";
@@ -184,4 +184,4 @@ const RegistrationForm = () => {
   );
 };
 
-export default RegistrationForm;
+export default memo(RegistrationForm);

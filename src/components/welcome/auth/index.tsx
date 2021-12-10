@@ -1,4 +1,5 @@
 import Login from "./login";
+import { memo } from "react";
 import Registration from "./register";
 import { Stack } from "@chakra-ui/react";
 
@@ -14,4 +15,5 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+// Memoizing the component to improve the performance
+export default memo(Auth);

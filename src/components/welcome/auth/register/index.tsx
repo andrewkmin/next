@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import ModalTriggerButton from "./buttons/ModalTrigger";
 import RegistrationModal from "./modals/RegistrationModal";
@@ -13,4 +14,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default memo(Register);

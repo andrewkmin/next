@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Button, FormControl, InputGroup } from "@chakra-ui/react";
 
 interface ModalTriggerProps {
@@ -26,4 +27,4 @@ const ModalTrigger = ({ registrationOnOpen }: ModalTriggerProps) => {
   );
 };
 
-export default ModalTrigger;
+export default memo(ModalTrigger);

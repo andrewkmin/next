@@ -7,6 +7,7 @@ import {
   Text,
   ModalBody,
 } from "@chakra-ui/react";
+import { memo } from "react";
 import RegistrationForm from "../forms/RegistrationForm";
 
 interface RegistrationModalProps {
@@ -35,4 +36,4 @@ const RegistrationModal = ({ isOpen, onClose }: RegistrationModalProps) => {
   );
 };
 
-export default RegistrationModal;
+export default memo(RegistrationModal);
