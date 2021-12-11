@@ -14,34 +14,12 @@ import {
   OPEN_GRAPH_GLOBAL_TYPE,
   WELCOME_META_DESCRIPTION,
 } from "../constants";
+import { NextPage } from "next";
 import { NextSeo } from "next-seo";
 import Auth from "../components/welcome/auth";
-import { GetServerSideProps, NextPage } from "next";
-
-type WelcomeProps = {
-  photoURL: string;
-};
-
-export const getServerSideProps: GetServerSideProps<WelcomeProps> =
-  async () => {
-    /**
-     * Image options:
-     * 1. https://images.unsplash.com/photo-1621347924118-ac0aa8d40b59?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OTh8fHB1cnBsZXxlbnwwfDF8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=100
-     * 2. https://images.unsplash.com/photo-1603118675111-239b194fb8d8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=375&q=100 (preferred)
-     * 3. https://cdn.pixabay.com/photo/2017/07/08/11/45/purple-2484167_960_720.jpg
-     * 4. https://images.unsplash.com/photo-1535478044878-3ed83d5456ef?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=769&q=1080
-     */
-
-    return {
-      props: {
-        photoURL:
-          "https://images.unsplash.com/photo-1603118675111-239b194fb8d8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=100",
-      },
-    };
-  };
 
 // The welcome/authentication page
-const Welcome: NextPage<WelcomeProps> = ({ photoURL }) => {
+const Welcome: NextPage = () => {
   return (
     <>
       <NextSeo
@@ -84,7 +62,6 @@ const Welcome: NextPage<WelcomeProps> = ({ photoURL }) => {
             <Image
               w={"100%"}
               zIndex={-1}
-              src={photoURL}
               border={"none"}
               alt={"Cover image"}
               objectFit={"cover"}
@@ -92,36 +69,9 @@ const Welcome: NextPage<WelcomeProps> = ({ photoURL }) => {
               filter={"brightness(60%)"}
               borderColor={"transparent"}
               h={["50vh", null, null, "100vh"]}
+              // prettier-ignore
+              src={"https://images.unsplash.com/photo-1603118675111-239b194fb8d8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1080&q=100"}
             />
-            {/* <Box
-            w={"100%"}
-            zIndex={-1}
-            // src={photo}
-            border={"none"}
-            objectFit={"fill"}
-            bgColor={"purple.400"}
-            filter={"brightness(60%)"}
-            borderColor={"transparent"}
-            h={["50vh", null, null, "100vh"]}
-          >
-            <video
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
-              loop
-              autoPlay
-              src={"/assets/polygon-welcome-loop.mp4"}
-            ></video>
-          </Box> */}
-
-            {/* <Image
-            w={"15%"}
-            zIndex={1}
-            pos={"absolute"}
-            filter={"brightness(0) invert(1)"}
-          /> */}
           </Flex>
 
           <Flex
